@@ -1,14 +1,8 @@
 const ensureAuthenticated = (req, res, next) => {
-    if (req.isAuthenticated()) {
-        return next();
-    }
-    res.redirect('/signin');
+    req.isAuthenticated() ? next() : res.redirect('/signin');
 }
 const forwardAuthenticated = (req, res, next) => {
-    if (!req.isAuthenticated()) {
-        return next();
-    }
-    res.redirect('chat/home');
+    !req.isAuthenticated() ? next() : res.redirect('chat/home')
 }
 
 module.exports = {
