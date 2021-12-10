@@ -6,10 +6,14 @@
 </head>
 <body>
   <div class="container-fluid bg-dark text-light">
+    <%- include ('../link/error_mgs.ejs'); %>
     <div class="container">
       <div class="col py-5">
         <h1><strong>WELCOME</strong></h1>
         <h2>Home page will be here</h2>
+        <h4>Account email: <%= user.email %></h4>
+        <h4>Account id: <%= user.id %></h4>
+        <h4>Account type: <%= user.role %></h4>
       </div>
     </div>
   </div>
