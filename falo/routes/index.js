@@ -16,17 +16,17 @@ module.exports = app => {
 
 	app.use(flash());
 
-	app.get('/', (req, res, next) => {
+	app.get('/', forwardAuthenticated, (req, res, next) => {
 		res.render('index');
 	});
 
-	app.get('/signin', (req, res, next) => {
+	app.get('/signin', forwardAuthenticated, (req, res, next) => {
 		res.render('account/signin');
 	});
 
-	app.post('/signin', userController.signIn)
+	app.post('/signin', forwardAuthenticated, userController.signIn)
 
-	app.get('/signout', (req, res, next) => {
+	app.get('/signout', ensureAuthenticated, (req, res, next) => {
 		req.logout()
 		req.flash('success_msg', 'Bạn đã đăng xuất')
 		res.redirect('/');
