@@ -1,35 +1,119 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <%- include('../link/head.ejs'); %>
-  <title>SIGN UP</title>
+    <title>SIGN UP</title>
 </head>
-<body>
-  <div class="container-fluid bg-dark text-light">
-    <div class="container">
-    <%- include ('../link/error_mgs.ejs'); %>
-    <div class="col py-5">
-        <h1><strong>SIGN UP</strong></h1>
-        <form action="/signup" method="POST">
-            <div class="panel panel-default">
-              <div class="panel-body">
-                <div class="form-group">
-                  <label for="email">Email: </label>
-                  <input type="email" class="form-control" id="email" name="email" placeholder="Enter your email">
-                </div>
 
-                <div class="form-group">
-                  <label for="password">Password: </label>
-                  <input type="password" class="form-control" id="password" name="password" minlength="8" placeholder="Enter your password">
+<body>
+  <div class="container-fluid bg-info text-light">
+    <div class="container pt-3">
+      <!-- logo -->
+      <div class="row">
+        <div class="col-4 mx-3"></div>
+        <div class="col-12 col-xl-6">
+          <div class="row">
+            <div class="d-md-none d-lg-block d-xl-none col-3 mx-n2"></div>
+            <div class="d-block d-sm-none row text-center pb-3">
+              <img src="images/main/logo_F_light.png" alt="Falo_logo" class="col-3 w-100">
+            </div>
+            <div class="d-none d-sm-block col-12 col-sm-2">
+              <img src="images/main/logo_F_light.png" alt="Falo_logo" class="w-100">
+            </div>
+            <div class="col text-center text-sm-left">
+              <h1 class="d-none d-sm-block d-md-none d-lg-block m-0 ml-0 ml-sm-n3 mt-n2 p-0"
+                style="font-size: 84px; line-height: 1; font-family: 'Trebuchet MS';"><strong>FALO</strong></h1>
+              <h1 class="d-block d-sm-none d-md-block d-lg-none" style="font-family: 'Trebuchet MS';">
+                <strong>Falo</strong></h1>
+
+              <h2 class="d-none d-lg-block d-xl-none" style="line-height: 2; margin-left: -13px;">Connecting people</h2>
+              <h2 class="d-none d-sm-none d-md-block d-lg-none ">Connecting people</h2>
+            </div>
+          </div>
+          <div class="row d-block d-md-none d-xl-block text-center text-md-left">
+            <div class="col">
+              <h2>Connecting people</h2>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row py-3">
+        <div class="col-3 d-none d-md-block"></div>
+        <div class="col col-md-10 col-lg-6">
+          <form action="/signup" method="POST" id="formSign" class="card text-dark">
+            <div class="card-header text-center text-info">
+              <h2><strong>ĐĂNG KÝ</strong></h2>
+            </div>
+            <div class="card-body">
+              <div class="form-group">
+                <label class="col-form-label" for="email">Email: </label>
+                <div class="input-group">
+                  <div class="input-group-prepend">
+                    <span class="input-group-text"><em class="fas fa-at"></em></span>
+                  </div>
+                  <input class="form-control" type="email" id="email" name="email" placeholder="Nhập email của bạn">
                 </div>
-                
-                <button type="submit" class="btn btn-success">SIGN UP</button>
+                <small class="form-text text-danger form-feedback"></small>
+              </div>
+
+              <div class="form-group">
+                <label class="col-form-label" for="password">New password: </label>
+                <div class="input-group">
+                  <div class="input-group-prepend">
+                    <span class="input-group-text"><em class="fas fa-key"></em></span>
+                  </div>
+                  <input class="form-control" type="password" id="password" name="password"
+                    placeholder="Nhập mật khẩu mới">
+                </div>
+                <small class="form-text text-danger form-feedback"></small>
+              </div>
+
+              <div class="form-group">
+                <label class="col-form-label" for="comfirmPassword">Comfirm password: </label>
+                <div class="input-group">
+                  <div class="input-group-prepend">
+                    <span class="input-group-text"><em class="fas fa-key"></em></span>
+                  </div>
+                  <input class="form-control" type="password" id="comfirmPassword" name="comfirmPassword"
+                    placeholder= 
+                    <% if(typeof(comfirmPassword) != 'undefined') { %>
+                      <%= comfirmPassword %> 
+                      <% } else { %>
+                        "Nhập lại mật khẩu mới"
+                      <% }; %> >
+                </div>
+                <small class="form-text text-danger form-feedback"></small>
               </div>
             </div>
+            <div class="col text-center">
+              <a class="col btn btn-info" onclick="submitForm('formSign')">ĐĂNG KÝ</a>
+              <a href="/signin" class="col my-3 btn btn-outline-secondary">ĐĂNG NHẬP TÀI KHOẢN SẴN CÓ</a>
+            </div>
           </form>
+        </div>
       </div>
     </div>
   </div>
   <%- include('../link/script.ejs'); %>
+  <script src="/javascripts/form_validate.js"></script>
+  <script>
+    //validate rules
+    validateArray[validateArray.length] = new Validate('formSign')
+    inputRequire('formSign', 'email', '*Hãy nhập email của bạn')
+    inputRequire('formSign', 'password', '*Hãy nhập mật khẩu của bạn')
+    inputRegex('formSign', 'email', /\S+@\S+\.\S+/, '*Email bạn nhập không đúng')
+    inputRegex('formSign', 'password', /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&.])[A-Za-z\d@$!%*#?&.]{8,}$/, '*Mật khẩu phải có ít nhất 8 ký tự (bao gồm chữ số và ký tự đặc biệt)')
+    inputConfirm('formSign', 'comfirmPassword', 'password')
+
+    function submitForm(formID){
+      const index = validateArray.findIndex((arr) => arr.formID == formID)
+      const formLegnth = document.forms[formID].length
+      const inValid = (validateArray[index].validateRes.length == formLegnth && validateArray[index].validateRes.every(validateRes => validateRes.isValid == true))
+      inValid ? document.forms[formID].submit() : console.log(validateArray[index])
+    }
+  </script>
 </body>
+
 </html>

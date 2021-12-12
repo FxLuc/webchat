@@ -3,18 +3,16 @@ const bcrypt = require('bcrypt')
 const { User } = require('../models')
 
 const signUp = (req, res, next) => {
-    const { email, password } = req.body
-    const errors = []
+    const { email, password, comfirmPassword } = req.body
+    const errors;
 
-    if (!email || !password) errors.push('Vui lòng điền vào tất cả các trường')
-    if (password.length < 8) errors.push('Mật khẩu phải có ít nhất 8 ký tự')
-    if (errors.length > 0) res.render('account/signup', { errors, email, password })
+    if (!email || !password && password.length < 8) res.render('account/signup', { errors, email, password, comfirmPassword })
     else {
         User.findOne({ email: email })
             .then(user => {
                 if (user) {
                     errors.push('Email này đã được đăng ký trước đó, vui lòng đăng nhập')
-                    res.render('account/signin', { errors, email, password })
+                    res.render('account/signin', { errors, email, password, comfirmPassword })
                 }
                 else {
                     const newUser = User({ email, password })

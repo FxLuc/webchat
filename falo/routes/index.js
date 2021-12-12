@@ -29,7 +29,7 @@ module.exports = app => {
 	app.get('/signout', (req, res, next) => {
 		req.logout()
 		req.flash('success_msg', 'Bạn đã đăng xuất')
-		res.redirect('/signin');
+		res.redirect('/');
 	});
 
 	app.get('/signup', (req, res, next) => {
@@ -41,4 +41,5 @@ module.exports = app => {
 	app.get('/home', ensureAuthenticated, (req, res, next) =>
 		res.render('chat/home', { user: req.user })
 	)
+	
 };

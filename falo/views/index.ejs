@@ -1,19 +1,130 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <%- include('./link/head.ejs'); %>
-  <title>Falo</title>
+    <title>Falo</title>
+    <style>
+      .index-background {
+        height: 100%;
+        background:
+          linear-gradient(#fff,
+            transparent),
+          linear-gradient(180deg,
+            #fff,
+            transparent),
+          linear-gradient(180deg,
+            #fff,
+            transparent),
+          linear-gradient(0deg,
+            #adefff,
+            transparent);
+        background-blend-mode: screen;
+      }
+    </style>
 </head>
-<body>
-  <div class="container-fluid bg-dark text-light">
+
+<body class="index-background">
+  <div class="container-fluid bg-info ">
+    <div class="container py-3 text-light">
+      <div class="row">
+        <!-- logo -->
+        <div class="col-12 col-lg-6 p-0 ">
+          <div class="row">
+            <div class="d-block d-sm-none row text-center pb-3">
+              <img src="images/main/logo_F_light.png" alt="Falo_logo" class="col-3 w-100">
+            </div>
+            <div class="d-none d-sm-block col-12 col-sm-2 col-lg-4 col-xl-2">
+              <img src="images/main/logo_F_light.png" alt="Falo_logo" class="w-100">
+            </div>
+            <div class="col text-center text-sm-left">
+              <h1 class="d-none d-sm-block d-md-none d-lg-block m-0 ml-0 ml-sm-n3 mt-n2 p-0"
+                style="font-size: 84px; line-height: 1; font-family: 'Trebuchet MS';"><strong>FALO</strong></h1>
+              <h1 class="d-block d-sm-none d-md-block d-lg-none" style="font-family: 'Trebuchet MS';"><strong>Falo</strong></h1>
+
+              <h2 class="d-none d-lg-block d-xl-none" style="line-height: 2; margin-left: -13px;">Connecting people</h2>
+              <h2 class="d-none d-sm-none d-md-block d-lg-none ">Connecting people</h2>
+            </div>
+          </div>
+          <div class="row d-block d-md-none d-xl-block text-center text-sm-left">
+            <div class="col">
+              <h2>Connecting people</h2>
+            </div>
+          </div>
+        </div>
+        <!-- form -->
+        <div class="col card bg-light pt-3 pb-2 h-100 text-dark d-none d-xl-block">
+          <form action="/signin" method="POST" class="row align-items-center" id="formSign">
+            <div class="col mb-n3">
+              <div class="form-group row">
+                <label class="col-12 col-lg-3 col-form-label" for="email">Email: </label>
+                <div class="input-group col-12 col-lg-9 px-0">
+                  <div class="input-group-prepend">
+                    <span class="input-group-text"><em class="fas fa-at"></em></span>
+                  </div>
+                  <input class="form-control email" type="email" id="email" name="email" placeholder="Enter your email">
+                  <small class="form-text text-danger form-feedback"></small>
+                </div>
+              </div>
+
+              <div class="form-group row">
+                <label class="col-12 col-lg-3 col-form-label" for="password">Password: </label>
+                <div class="input-group col-12 col-lg-9 px-0">
+                  <div class="input-group-prepend">
+                    <span class="input-group-text"><em class="fas fa-key"></em></span>
+                  </div>
+                  <input class="form-control password" type="password" id="password" name="password"
+                    placeholder="Enter your password">
+                  <small class="form-text text-danger form-feedback"></small>
+                </div>
+              </div>
+            </div>
+            <div class="col-12 col-lg-3 px-0 px-lg-2 text-center">
+              <a href="/signup" class="col mb-3 btn btn-outline-secondary d-none d-lg-block">ĐĂNG KÝ</a>
+              <a class="col btn btn-outline-dark"  onclick="submitForm('formSign')" >ĐĂNG NHẬP</a>
+              <a href="/signup" class="col my-3 btn btn-outline-secondary d-block d-lg-none">ĐĂNG KÝ TÀI KHOẢN MỚI</a>
+            </div>
+          </form>
+        </div>
+        <div class="col h-100 d-block d-xl-none px-0">
+          <div class="row">
+            <div class="col-12 col-lg-5"></div>
+            <div class="col">
+              <a href="/signin" class="col my-3 btn btn-success border border-light"><strong>ĐĂNG NHẬP</strong> </a>
+              <div class="coltext-light text-center">HOẶC THAM GIA NGAY</div>
+              <a href="/signup" class="col mb-3 btn btn-outline-light "><strong> ĐĂNG KÝ TÀI KHOẢN MỚI</strong></a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="container-fluid">
     <div class="container">
-      <div class="col py-5">
-        <h1><strong>Falo</strong></h1>
-        <h2>This is index page</h2>
-        <a class="btn btn-success" href="/signin" >SIGN IN</a>
+      <div class="row">
+        <div class="col">
+          <img src="images/main/background_index.png" alt="Falo_logo" class="img-fluid w-100">
+        </div>
       </div>
     </div>
   </div>
   <%- include('./link/script.ejs'); %>
+  <script src="/javascripts/form_validate.js"></script>
+  <script>
+    //validate rules
+    validateArray[validateArray.length] = new Validate('formSign')
+    inputRequire('formSign', 'email', '')
+    inputRequire('formSign', 'password', '')
+    inputRegex('formSign', 'email', /\S+@\S+\.\S+/, '')
+    inputRegex('formSign', 'password', /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&.])[A-Za-z\d@$!%*#?&.]{8,}$/, '')
+
+    function submitForm(formID){
+      const index = validateArray.findIndex((arr) => arr.formID == formID)
+      const formLegnth = document.forms[formID].length
+      const inValid = (validateArray[index].validateRes.length == formLegnth && validateArray[index].validateRes.every(validateRes => validateRes.isValid == true))
+      inValid ? document.forms[formID].submit() : console.log(validateArray[index])
+    }
+  </script>
 </body>
+
 </html>
