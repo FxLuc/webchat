@@ -1,53 +1,61 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <%- include('../link/head.ejs'); %>
-  <title>Falo</title>
+    <title>Falo</title>
 </head>
-<body>
-  <div class="container-fluid bg-info text-light">
-    <div class="container pt-3">
-      <div class="row">
-        <div class="col-12 col-xl-6 p-0">
-          <div class="row">
-            <div class="col-4 col-sm-3 col-md-2 col-xl-2">
-              <img src="images/main/logo_F_light.png" alt="Falo_logo" class="w-100">
-            </div>
-            <div class="col">
-              <h1 class="d-block d-lg-none" style="font-family: 'Trebuchet MS';"><strong>Falo</strong></h1>
-              <h1 class="d-none d-lg-block m-0 ml-n3 mt-n2 p-0"
-                style="font-size: 84px; line-height: 1; font-family: 'Trebuchet MS';"><strong>FALO</strong></h1>
-              <h2 class="d-none d-lg-block d-xl-none" style="line-height: 2; margin-left: -13px;">Connecting people</h2>
-              <h2 class="d-none d-sm-block d-lg-none">Connecting people</h2>
-              <h5 class="d-block d-sm-none">Connecting people</h5>
-            </div>
-          </div>
-          <div class="row d-none d-xl-block">
-            <div class="col">
-              <h2>Connecting people</h2>
-            </div>
-          </div>
-        </div>
-        <div class="col py-3">
-            <div class="col-12 col-lg-3 px-0 px-lg-2">
-              <a href="/signout" class="col mb-3 btn btn-outline-secondary d-none d-lg-block">ĐĂNG XUẤT</a>
-            </div>
-        </div>
-      </div>
+
+<body style="height: 100vh; position: relative;">
+  <nav class="navbar navbar-dark bg-info justify-content-between px-3">
+    <h1 class="my-0" style="line-height: 0;">
+      <a class="navbar-brand py-0" href="/">
+        <img src="images/main/logo_F_light.png" width="30" height="30" class="d-inline-block align-top" alt="FALO logo">
+        <span class="" style="font-family: 'Trebuchet MS'; font-size: 35px; line-height: 0.9;">Falo</span>
+      </a>
+    </h1>
+    <div class="">
+      <a href="/signout" class="btn btn-outline-light">ĐĂNG XUẤT <em class="fas fa-sign-out-alt"></em></a>
     </div>
-  </div>
-  <div class="container-fluid bg-dark text-light">
-    <%- include ('../link/error_mgs.ejs'); %>
-    <div class="container">
-      <div class="col py-5">
+  </nav>
+
+  <div class="container-fluid">
+    <div class="row row flex-md-nowrap">
+      <div class="col-12 col-md-4 col-xl-3 pt-2">
+        <h4> <em class="fas fa-user-alt"></em> <strong>
+            <%= user.email %>
+          </strong></4>
+          <h2>Home page will be here</h2>
+          <h4>Account email: <%= user.email %>
+          </h4>
+          <h4>Account id: <%= user.id %>
+          </h4>
+          <h4>Account type: <%= user.role %>
+          </h4>
+      </div>
+      <div class="col-12 col-md-8 col-xl-9">
         <h1><strong>WELCOME</strong></h1>
         <h2>Home page will be here</h2>
-        <h4>Account email: <%= user.email %></h4>
-        <h4>Account id: <%= user.id %></h4>
-        <h4>Account type: <%= user.role %></h4>
+        <h4>Account email: <%= user.email %>
+        </h4>
+        <h4>Account id: <%= user.id %>
+        </h4>
+        <h4>Account type: <%= user.role %>
+        </h4>
       </div>
     </div>
   </div>
+
   <%- include('../link/script.ejs'); %>
+    <script type="text/javascript">
+      $('body').scrollspy({ target: '#navbar-example' })
+      $('[data-spy="scroll"]').each(function () {
+        var $spy = $(this).scrollspy('refresh')
+      })
+      $('[data-spy="scroll"]').on('activate.bs.scrollspy', function () {
+        // do something…
+      })
+    </script>
 </body>
+
 </html>
