@@ -4,7 +4,7 @@ const { User } = require('../models')
 
 const signUp = (req, res, next) => {
     const { email, password, comfirmPassword } = req.body
-    const errors;
+    const errors = []
 
     if (!email || !password && password.length < 8) res.render('account/signup', { errors, email, password, comfirmPassword })
     else {
