@@ -44,4 +44,18 @@ app.use(function(err, req, res, next) {
   res.render('error');
 });
 
+// socket.io
+const http = require('http').Server(app);
+const io = require('socket.io')(http);
+
+io.on('connection', (socket) => {
+  socket.on('chat_box', data => {
+    io.emit('chat_box', { from: data.from, msg: data.msg });
+  });
+});
+
+http.listen(3000, () => {
+  console.log(`Socket.IO server running at http://localhost:3000/`);
+});
+
 module.exports = app;

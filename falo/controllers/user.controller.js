@@ -22,7 +22,7 @@ const signUp = (req, res, next) => {
                             newUser.password = hash
                             newUser
                                 .save()
-                                .then(_ => res.redirect('sigin'))
+                                .then(_ => res.redirect('signin', { errors: "Đăng ký tài khoản thành công, vui lòng đăng nhập"}))
                         })
                     })
                 }
