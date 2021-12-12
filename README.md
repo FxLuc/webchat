@@ -22,4 +22,5 @@ Open your browser: localhost:3000
 <img src="falo/public/images/demo/signup_xl.JPG" style="width:100%" alt="Index"/>
 
 ----------
-#### **[Le Tuan Luc](https://github.com/often127)** | [Lien Tan Vung](https://github.com/lientanvung) | [Nguyen Thanh An](https://github.com/An7112)
+Author:
+#### [Le Tuan Luc](https://github.com/often127) | [Lien Tan Vung](https://github.com/lientanvung) | [Nguyen Thanh An](https://github.com/An7112)
