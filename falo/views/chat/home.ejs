@@ -2,24 +2,28 @@
 <html lang="en">
 
 <head>
-  <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
   <%- include('../link/head.ejs'); %>
     <title>Falo</title>
 </head>
 
 <body style="height: 100vh; position: relative;">
-  <div class="w3-sidebar w3-bar-block w3-card w3-animate-left" id="sidebar" style="display: none;">
-    <button class="w3-bar-item w3-button w3-large" onclick="w3_close()">Close &times;</button>
-    <a href="#" class="w3-bar-item w3-button">Link 1</a>
-    <a href="#" class="w3-bar-item w3-button">Link 2</a>
-    <a href="#" class="w3-bar-item w3-button">Link 3</a>
+  <div class="col-12 col-sm-6 col-md-3" id="sidebar" style="display: none; position:fixed;z-index:1; overflow:auto">
+    <div class="card">
+      <ul class="list-group list-group-flush">
+        <li class="list-group-item">    <button class="btn btn-secondary" onclick="w3_close()">Close &times;</button>
+        </li>
+        <li class="list-group-item">Dapibus ac facilisis in</li>
+        <li class="list-group-item">Vestibulum at eros</li>
+      </ul>
+    </div>
   </div>
 
   <div id="main">
+    <!-- nav -->
     <nav class="navbar navbar-dark bg-info justify-content-between px-3">
       <h1 class="my-0" style="line-height: 0;">
-        <div id="openNav" class="text-secondary m-0 bg-light pr-1"
-          style="font-size: 17px; position: fixed; left: 0; top: 0; height: 51px; width: 17px;" onclick="w3_open()">
+        <div id="openNav" class="text-secondary m-0 bg-dark pr-1"
+          style="font-size: 17px; position: fixed; left: 0; top: 0; height: 54px; width: 17px;" onclick="w3_open()">
           <p>
             <em class="fas fa-angle-double-left"></em> <br>
             <em class="fas fa-angle-double-left"></em> <br>
@@ -38,10 +42,10 @@
     </nav>
 
     <div class="container-fluid">
-      <div class="row flex-md-nowrap">
-        <div class="col-12 col-md-4 col-xl-3 pt-2 border"
-          style="height: calc(100vh - 51px); overflow-y: scroll; direction: rtl;">
-          <h5 id="user_email">
+      <div class="row flex-md-nowrap" >
+        <!-- side contact -->
+        <div class="col-12 col-md-4 col-xl-3 pt-2 border-right" style="height: calc(100vh - 54px); overflow-y: scroll; direction: rtl;" >
+          <h5 id="user_email" class="text-center">
             <%= user.email %>
           </h5>
           <table class="table" style="direction: ltr;" id="chat_rooms" aria-hidden="true">
@@ -66,14 +70,20 @@
               </tr>
             </tbody>
           </table>
-
         </div>
-        <div class="col-12 col-md-8 col-xl-9 py-2" style="position: fixed; bottom: 0; right: 0;">
-          <ul id="chatBox"></ul>
-          <div class="" >
-            <form id="formChat" class="form row px-2" action="javascript:;">
-              <input id="inputMessage" class="col form-control mr-2" autocomplete="off">
-              <button type="submit" class="btn btn-info col-2">Send</button>
+
+        <!-- chat box -->
+        <div class="col-12 col-md-8 col-xl-9 bg-white">
+          <div class="row" style="height: calc(100vh - 100px); overflow-y: scroll;">
+            <table class="table" id="chatbox_table" aria-hidden="true">
+              <tbody>
+              </tbody>
+            </table>
+          </div>
+          <div class="">
+            <form id="formChat" class="form row px-2" action="javascript:;" onsubmit="sendMessage(form_message.form[0])">
+              <input type="text" id="form_message" class="col form-control mr-2" autocomplete="off" placeholder="Nhập tin nhắn...">
+              <button type="submit" class="btn btn-info col-2"><em class="fas fa-paper-plane"></em> SEND</button>
             </form>
           </div>
         </div>
@@ -83,42 +93,7 @@
 
   <%- include('../link/script.ejs'); %>
     <script src="/socket.io/socket.io.js"></script>
-    <script type="text/javascript">
-      var socket = io()
-
-      var chatBox = document.getElementById('chatBox')
-      var formChat = document.getElementById('formChat')
-      var userEmail = document.getElementById('user_email').innerText
-      var inputMessage = document.getElementById('inputMessage')
-
-      formChat.addEventListener('submit', data => {
-        data.preventDefault()
-        if (inputMessage.value) {
-          socket.emit('chat_box', { from: userEmail, msg: inputMessage.value })
-          inputMessage.value = ''
-        }
-      })
-
-      socket.on('chat_box', data => {
-        var item = document.createElement('li')
-        item.textContent = `${data.from}: ${data.msg}`
-        chatBox.appendChild(item)
-        window.scrollTo(0, document.body.scrollHeight)
-      })
-      function w3_open() {
-        document.getElementById("main").style.marginLeft = "25%";
-        document.getElementById("sidebar").style.width = "25%";
-        document.getElementById("sidebar").style.display = "block";
-        document.getElementById("openNav").style.display = 'none';
-      }
-
-      function w3_close() {
-        document.getElementById("main").style.marginLeft = "0%";
-        document.getElementById("sidebar").style.width = "0%";
-        document.getElementById("sidebar").style.display = "none";
-        document.getElementById("openNav").style.display = "inline-block";
-      }
-    </script>
+    <script src="javascripts/chat_socketio.js"></script>
 </body>
 
 </html>
