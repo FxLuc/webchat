@@ -38,8 +38,7 @@ const signIn = (req, res, next) => {
     })(req, res, next)
 }
 
-const signInRequired = (req, res, next) =>
-    req.user ? next() : res.status(401).json({ message: 'Unauthorized user!' })
+const signInRequired = (req, res, next) =>  req.user ? next() : res.status(401).json({ message: 'Unauthorized user!' })
 
 module.exports = {
     signIn,
