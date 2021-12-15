@@ -30,14 +30,12 @@
       .text-light-not-important {
         color: #f8f9fa;
       }
-
     </style>
     <title>Falo</title>
 </head>
 
 <body style="height: 100vh; position: relative;">
   <%- include('./sidebar.ejs'); %>
-
     <div id="main">
       <!-- nav -->
       <%- include('./nav.ejs'); %>
@@ -49,69 +47,185 @@
             <div class="col-12 col-lg-5 col-xl-4 px-0 border-right bg-light"
               style="height: calc(100vh - 54px); overflow-y: scroll; direction: rtl;">
 
-              <div class="row px-3 ">
+              <div class="row ml-2">
                 <div class="col tabe-hover-row text-center"> 2 <em class="fas fa-users"></em></div>
                 <div class="col tabe-hover-row text-center"> 3 <em class="fas fa-bell"></em></div>
                 <div class="col tabe-hover-row text-center"> 1 <em class="fas fa-comments"></em></div>
               </div>
-              <table class="table" style="direction: ltr;" id="chat_rooms" aria-hidden="true">
+
+              <table class="table" style="direction: ltr;" id="chatroom_table" aria-hidden="true">
                 <tbody>
                   <tr>
                     <td class="p-0">
-                      <a href="/profile" class="btn w-100 tabe-hover-row">
-                        Account email: <%= user.email %>
+                      <a class="btn w-100 tabe-hover-row">
+                        <%= user_profile.name %>
                       </a>
                     </td>
                   </tr>
+
                   <tr>
                     <td class="p-0">
-                      <a href="/profile" class="btn w-100 tabe-hover-row">
-                        Account email: <%= user.email %>
+                      <a class="btn w-100 tabe-hover-row">
+                        <%= user_profile.name %>
                       </a>
                     </td>
                   </tr>
+
+                  <tr>
+                    <td class="text-center">
+                      <form id="form_find_email" class="form p-3 bg-light" action="javascript:;" method="POST"
+                        onsubmit="createChatRoom(form_find_email.email.value)">
+                        <div class="form-group">
+                          <small class="form-text text-left text-danger form-feedback"></small>
+                          <div class="input-group">
+                            <input class="form-control" type="email" id="email" name="email" placeholder="Nhập email..."
+                              required>
+                            <div class="input-group-prepend">
+                              <button class="input-group-text btn btn-info" type="submit"><em
+                                  class="fas fa-plus"></em></button>
+                            </div>
+                          </div>
+                        </div>
+                      </form>
+                    </td>
+                  </tr>
+
                 </tbody>
               </table>
             </div>
 
             <!-- chat box -->
             <div class="col-12 col-lg-7 col-xl-8 bg-white">
-              <div class="row" style="height: calc(100vh - 100px); overflow-y: scroll;">
+
+              <div class="row" style="height: calc(100vh - 124px); overflow-y: scroll;">
                 <table class="table" id="chatbox_table" aria-hidden="true">
                   <tbody>
                   </tbody>
                 </table>
               </div>
+
               <div class="">
-                <form id="formChat" class="form row px-2" action="javascript:;"
+                <form id="formChat" class="form row p-3 bg-light" action="javascript:;"
                   onsubmit="sendMessage(form_message.form[0])">
                   <input type="text" id="form_message" class="col form-control mr-2" autocomplete="off"
                     placeholder="Nhập tin nhắn...">
-                  <button type="submit" class="btn btn-info col-4 col-sm-3 col-md-2"><em class="fas fa-paper-plane"></em> SEND</button>
+                  <button type="submit" class="btn btn-info col-4 col-sm-3 col-md-2"><em
+                      class="fas fa-paper-plane"></em> SEND</button>
                 </form>
               </div>
-            </div>
 
+            </div>
           </div>
         </div>
     </div>
+
     <%- include('../link/script.ejs'); %>
+      <script src="/javascripts/form_validate.js"></script>
+      <script src="/socket.io/socket.io.js"></script>
       <script>
+        var socket = io()
+        var room = []
+        var new_message_id_count = 0
+
+        // access ejs to javascript
+        const _user = '<%- JSON.stringify(user) %>'
+        const _user_profile = '<%- JSON.stringify(user_profile) %>'
+        var user = JSON.parse(_user)
+        var user_profile = JSON.parse(_user_profile)
+        var chatbox_table = document.getElementById('chatbox_table')
+        var chatroom_table = document.getElementById('chatroom_table')
+        var chatroom_id = ''
+
+        function createChatRoom(email) {
+          chatroom_id = user.email.substr(0, email.lastIndexOf("@")) + email.substr(0, email.lastIndexOf("@"))
+          socket.on('chat_room', data => receiveMessage(data))
+          chatroom_table.insertRow(0).innerHTML =
+            `<td class="p-0">
+              <a class="btn w-100 tabe-hover-row">
+                ${email}
+              </a>
+            </td>`
+        }
+
+        function sendMessage(input_element) {
+          if (input_element.value.trim()) {
+            socket.emit('chat_room', { from: user_profile.name, msg: input_element.value, room: user._id })
+            input_element.value = ''
+          }
+        }
+
+        function receiveMessage(data) {
+          new_message_id_count++
+          const new_mesage_class = `new_message_id_${new_message_id_count}`
+          if (data.room == user._id) {
+            chatbox_table.insertRow(-1).innerHTML =
+              `<td class="col text-right" id="${new_mesage_class}">
+            <div class="text-secondary px-2 ">${data.from}</div>
+            <div class="col btn btn-info w-75 text-right rouded-send">
+                ${data.msg}
+            </div>
+        </td>`
+          } else {
+            chatbox_table.insertRow(-1).innerHTML =
+              `<td class="col text-left" id="${new_mesage_class}">
+                <div class="text-secondary px-2 ">${data.from}</div>
+                <div class="col btn btn-secondary w-75 text-left rouded-recieve">
+                    <p>${data.msg} </p>
+                </div>
+            </td>`
+          }
+          document.getElementById(new_mesage_class).scrollIntoView()
+        }
+
+        function clearChatbox() {
+          for (let i = chatbox_table.rows.length - 1; i > 0; i--) chatbox_table.deleteRow(i)
+        }
+
+        const inputElement = document.forms['form_find_email']['email']
+        inputRegex(/\S+@\S+\.\S+/, '*Email bạn nhập không đúng')
+
+        function inputRegex(regex, feedback) {
+          inputElement.addEventListener('input', e => {
+            const inputElementValue = e.target.value.trim().valueOf()
+            const inValid = !(regex.test(inputElementValue))
+            showFeedback(inValid, feedback)
+          })
+          inputElement.addEventListener('blur', e => {
+            const inputElementValue = e.target.value.trim().valueOf()
+            const inValid = (inputElementValue != '' && !(regex.test(inputElementValue)))
+            inValid ? showFeedback(inValid, feedback) : {}
+          })
+        }
+
+        function showFeedback(inValid, feedback) {
+          let inputFeedback = inputElement.parentElement.querySelector('.form-feedback')
+          inputFeedback == null ? inputFeedback = inputElement.parentElement.parentElement.querySelector('.form-feedback') : {}
+          let index = validateArray.findIndex(validate => validate.formID == formID)
+          if (inValid) {
+            inputFeedback.innerHTML = feedback
+            inputElement.classList.remove('is-valid')
+            inputElement.classList.add('is-invalid')
+          } else {
+            inputFeedback.innerHTML = ''
+            inputElement.classList.remove('is-invalid')
+            inputElement.classList.add('is-valid')
+          }
+        }
+
+        // remove feedback invalid 
+        inputElement.addEventListener('blur', e => {
+          inputElement.parentElement.parentElement.querySelector('.form-feedback').innerHTML = ''
+          inputElement.classList.remove('is-invalid')
+        })
+
+        // sidebar
         function sidebar_toogle() {
           $("#main").toggleClass('w-75');
           $("#sidebar").toggleClass('d-block');
           $("#sidebar-close").toggleClass('d-block');
           $("#nav-sidebar-close").toggleClass('d-none');
         }
-        const _user = '<%- JSON.stringify(user) %>'
-        const _user_profile = '<%- JSON.stringify(user_profile) %>'
-        var user = JSON.parse(_user)
-        var user_profile = JSON.parse(_user_profile)
-        var chatbox_table = document.getElementById('chatbox_table')
-        
       </script>
-      <script src="/socket.io/socket.io.js"></script>
-      <script src="javascripts/chat_socketio.js"></script>
 </body>
 
 </html>

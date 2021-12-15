@@ -49,8 +49,8 @@ const http = require('http').Server(app);
 const io = require('socket.io')(http);
 
 io.on('connection', (socket) => {
-  socket.on('chatbox', data => {
-    io.emit(data.room, { from: data.from, msg: data.msg, room: data.room });
+  socket.on('chat_room', data => {
+    io.emit('chat_room', data);
   });
 });
 
