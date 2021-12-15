@@ -44,14 +44,25 @@
 
         <div class="container-fluid">
           <div class="row flex-lg-nowrap">
+
             <!-- side contact -->
-            <div class="col-12 col-lg-5 col-xl-4 pt-2 px-0 border-right bg-light"
+            <div class="col-12 col-lg-5 col-xl-4 px-0 border-right bg-light"
               style="height: calc(100vh - 54px); overflow-y: scroll; direction: rtl;">
-              <h5 id="user_email" class="text-center">
-                <%= user.email %>
-              </h5>
+
+              <div class="row px-3 ">
+                <div class="col tabe-hover-row text-center"> 2 <em class="fas fa-users"></em></div>
+                <div class="col tabe-hover-row text-center"> 3 <em class="fas fa-bell"></em></div>
+                <div class="col tabe-hover-row text-center"> 1 <em class="fas fa-comments"></em></div>
+              </div>
               <table class="table" style="direction: ltr;" id="chat_rooms" aria-hidden="true">
                 <tbody>
+                  <tr>
+                    <td class="p-0">
+                      <a href="/profile" class="btn w-100 tabe-hover-row">
+                        Account email: <%= user.email %>
+                      </a>
+                    </td>
+                  </tr>
                   <tr>
                     <td class="p-0">
                       <a href="/profile" class="btn w-100 tabe-hover-row">
@@ -80,13 +91,11 @@
                 </form>
               </div>
             </div>
+
           </div>
         </div>
     </div>
-
     <%- include('../link/script.ejs'); %>
-      <script src="/socket.io/socket.io.js"></script>
-      <script src="javascripts/chat_socketio.js"></script>
       <script>
         function sidebar_toogle() {
           $("#main").toggleClass('w-75');
@@ -94,7 +103,15 @@
           $("#sidebar-close").toggleClass('d-block');
           $("#nav-sidebar-close").toggleClass('d-none');
         }
+        const _user = '<%- JSON.stringify(user) %>'
+        const _user_profile = '<%- JSON.stringify(user_profile) %>'
+        var user = JSON.parse(_user)
+        var user_profile = JSON.parse(_user_profile)
+        var chatbox_table = document.getElementById('chatbox_table')
+        
       </script>
+      <script src="/socket.io/socket.io.js"></script>
+      <script src="javascripts/chat_socketio.js"></script>
 </body>
 
 </html>

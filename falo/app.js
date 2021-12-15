@@ -50,7 +50,7 @@ const io = require('socket.io')(http);
 
 io.on('connection', (socket) => {
   socket.on('chatbox', data => {
-    io.emit(data.room, { from: data.from, msg: data.msg });
+    io.emit(data.room, { from: data.from, msg: data.msg, room: data.room });
   });
 });
 

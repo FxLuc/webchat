@@ -23,6 +23,7 @@ const signUp = (req, res, next) => {
                             if (err) throw err
                             var userProfile = new UserProfile()
                             userProfile.idUser = newUser.id
+                            userProfile.name = newUser.email
                             userProfile.save(_err => {
                                 if (_err) throw _err
                                 res.render('account/signin', {
