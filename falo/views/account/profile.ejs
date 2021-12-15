@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <%- include('../link/head.ejs'); %>
+    <title>Profile</title>
+</head>
+
+<body class="bg-info text-light" style="height: 100vh;">
+  <div class="container-fluid">
+    <div class="container pt-3">
+      <!-- logo -->
+      <%- include('./logo.ejs'); %>
+
+      <div class="row py-3">
+        <div class="col-3 d-none d-md-block"></div>
+        <div class="col col-md-10 col-lg-6">
+          <form action="/profile" method="POST" id="formProfile" class="card text-dark">
+            <div class="card-header text-center text-info">
+              <h2><strong><%= user.email %></strong></h2>
+            </div>
+            <div class="card-body">
+              <%- include('../link/error_mgs.ejs'); %>
+              <div class="col text-center">
+                <label for="user_profile_avatar">Avatar</label><br>
+                <img src="<%= user_profile.avatar %>" alt="avatar" class="col-3 p-2">
+                <input type="file" class="col-9 mx-auto btn btn-secondary" id="user_profile_avatar" name="user_profile_avatar">
+              </div>
+
+              <div class="form-group">
+                <label class="col-form-label" for="user_profile_name">Tên:</label>
+                <input class="form-control" type="text" id="user_profile_name" name="user_profile_name" placeholder="Enter your name" minlenght="3" value="<%= user_profile.name %>">
+                <small class="form-text text-danger form-feedback"></small>
+              </div>
+
+              <div class="form-group">
+                <label class="col-form-label" for="user_profile_bio">Bio:</label>
+                <input class="form-control" type="text" id="user_profile_bio" name="user_profile_bio" placeholder="Something about your self..." value="<%= user_profile.bio %>">
+                <small class="form-text text-danger form-feedback"></small>
+              </div>
+
+              <div class="row">
+                <div class="col">
+                  <div class="form-group">
+                    <label for="user_profile_gender">Giới tính:</label>
+                    <select class="form-control" id="user_profile_gender" name="user_profile_gender" >
+                      <option>None</option>
+                      <option <% if (user_profile.gender == "Male") { %>selected<% }%>>Male</option>
+                      <option <% if (user_profile.gender == "Female") { %>selected<% }%>>Female</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="col">
+                  <div class="form-group">
+                    <label for="user_profile_dob">Ngày sinh: </label>
+                    <input class="form-control " type="date" id="user_profile_dob" name="user_profile_dob" value="<%= user_profile.dob %>">
+                  </div>
+                </div>
+              </div>
+
+              <!-- <div class="form-group">
+                <label class="col-form-label" for="user_password">Password: </label>
+                <div class="input-group">
+                  <div class="input-group-prepend">
+                    <span class="input-group-text"><em class="fas fa-key"></em></span>
+                  </div>
+                  <input class="form-control" type="user_password" id="user_password" name="user_password"
+                    placeholder="Bỏ trống trường này nếu không muốn thay đổi">
+                </div>
+                <small class="form-text text-danger form-feedback"></small>
+              </div> -->
+            
+            <div class="">
+              <hr>
+              <div class="form-group">
+                  <label for="user_profile_address">Địa chỉ: </label>
+                  <input class="form-control" type="user_profile_address" id="user_profile_address" name="user_profile_address"
+                  placeholder="Somewhere in Đà Nẵng..." value="<%= user_profile.contact.address %>">
+              </div>
+
+              <div class="form-group">
+                <label for="user_profile_tel">Điện thoại: </label>
+                <input class="form-control" type="tel" id="user_profile_tel" name="user_profile_tel"
+                placeholder="039 345 6789" value="<%= user_profile.contact.tel %>">
+              </div>
+
+              <div class="form-group">
+                <label for="user_profile_email">Email khác: </label>
+                <input class="form-control" type="user_profile_email" id="user_profile_email" name="user_profile_email"
+                placeholder="example@mail.com" value="<%= user_profile.contact.email %>">
+              </div>
+
+              <div class="form-group">
+                <label for="user_profile_link">Link: </label>
+                <input class="form-control" type="user_profile_link" id="user_profile_link" name="user_profile_link"
+                placeholder="fb.me/often127" value="<%= user_profile.contact.link %>">
+              </div>
+            </div>
+          </div>
+            <div class="col text-center mb-3">
+              <button type="submit" class="col btn btn-info">Lưu lại các thay đổi</button>
+            </div>
+            <div class="col text-center mb-3">
+              <a href="/home" class="col btn btn-secondary">Hủy bỏ các thay đổi</a>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+  <%- include('../link/script.ejs'); %>
+</body>
+
+</html>

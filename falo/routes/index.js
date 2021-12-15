@@ -38,8 +38,8 @@ module.exports = app => {
 
 	app.post('/signup', userController.signUp)
 
-	app.get('/home', ensureAuthenticated, (req, res, next) =>
-		res.render('chat/home', { user: req.user })
-	)
-	
+	app.get('/home', ensureAuthenticated, userController.home)
+
+	app.get('/profile', ensureAuthenticated, userController.profile);
+	app.post('/profile', ensureAuthenticated, userController.updateProfile)
 };

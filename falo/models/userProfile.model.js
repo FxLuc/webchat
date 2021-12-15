@@ -2,12 +2,7 @@ const mongoose = require('mongoose')
 
 const userProfileSchema = mongoose.Schema(
   {
-    firstName: {
-      type: String,
-      required: true,
-      trim: true,
-    },
-    lastName: {
+    name: {
       type: String,
     },
     gender: {
@@ -16,10 +11,12 @@ const userProfileSchema = mongoose.Schema(
       default: 'None'
     },
     dob: {
-      type: Date,
-      min: '1930-01-01',
-      max: '2015-12-31',
+      type: String,
       default: '2003-12-31'
+    },
+    avatar: {
+      type: String,
+      default: 'images/main/logo_F_info.png'
     },
     contact: {
       address: {
