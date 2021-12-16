@@ -137,19 +137,28 @@
         var chatroom_id = ''
 
         function createChatRoom(email) {
-          chatroom_id = user.email.substr(0, email.lastIndexOf("@")) + email.substr(0, email.lastIndexOf("@"))
-          socket.on('chat_room', data => receiveMessage(data))
+          chatroom_id = email.substr(0, email.lastIndexOf("@"))
           chatroom_table.insertRow(0).innerHTML =
             `<td class="p-0">
               <a class="btn w-100 tabe-hover-row">
                 ${email}
               </a>
             </td>`
+          joinChatRoom(chatroom_id)
+        }
+
+        function joinChatRoom(chatroom_id_join) {
+          // socket.emit(chatroom_id, { room: chatroom_id, sender: user_profile.name, from: user._id, msg: "Leaving this room", leave: true})
+          clearChatbox()
+          // socket.emit('chat_room', chatroom_id_join)
+          socket.emit('chat_room', chatroom_id_join)
+          socket.on('chat_message', data => receiveMessage(data))
+          chatroom_id = chatroom_id_join
         }
 
         function sendMessage(input_element) {
           if (input_element.value.trim()) {
-            socket.emit('chat_room', { from: user_profile.name, msg: input_element.value, room: user._id })
+            socket.emit('chat', { room: chatroom_id, sender: user_profile.name, from: user._id, msg: input_element.value})
             input_element.value = ''
           }
         }
@@ -157,10 +166,10 @@
         function receiveMessage(data) {
           new_message_id_count++
           const new_mesage_class = `new_message_id_${new_message_id_count}`
-          if (data.room == user._id) {
+          if (data.from == user._id) {
             chatbox_table.insertRow(-1).innerHTML =
               `<td class="col text-right" id="${new_mesage_class}">
-            <div class="text-secondary px-2 ">${data.from}</div>
+            <div class="text-secondary px-2 ">${data.sender}</div>
             <div class="col btn btn-info w-75 text-right rouded-send">
                 ${data.msg}
             </div>
@@ -168,17 +177,17 @@
           } else {
             chatbox_table.insertRow(-1).innerHTML =
               `<td class="col text-left" id="${new_mesage_class}">
-                <div class="text-secondary px-2 ">${data.from}</div>
+                <div class="text-secondary px-2 ">${data.sender}</div>
                 <div class="col btn btn-secondary w-75 text-left rouded-recieve">
                     <p>${data.msg} </p>
                 </div>
-            </td>`
+              </td>`
           }
           document.getElementById(new_mesage_class).scrollIntoView()
         }
 
         function clearChatbox() {
-          for (let i = chatbox_table.rows.length - 1; i > 0; i--) chatbox_table.deleteRow(i)
+          for (let i = chatbox_table.rows.length - 1; i >= 0; i--) chatbox_table.deleteRow(i)
         }
 
         const inputElement = document.forms['form_find_email']['email']

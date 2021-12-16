@@ -48,11 +48,25 @@ app.use(function(err, req, res, next) {
 const http = require('http').Server(app);
 const io = require('socket.io')(http);
 
+var socket_room_id = ''
 io.on('connection', (socket) => {
-  socket.on('chat_room', data => {
-    io.emit('chat_room', data);
-  });
-});
+  socket.on('chat_room', room_id => {
+    socket.join(room_id)
+    socket_room_id = room_id
+    io.sockets.in(room_id).emit('chat_message', { room: room_id, sender: '', from: '', msg: "join"});
+    // io.in(room_id).emit('chat_message', true)
+    // socket.on(room_id, data => {
+    //   if (data.leave) {
+    //     socket.off(data.room, data);
+    //   } else {
+    //     io.emit(data.room, data);
+    //   }
+    // })
+  })
+  socket.on('chat', data => {
+    io.sockets.in(data.room).emit('chat_message', data);
+  })
+})
 
 http.listen(3000, () => {
   console.log(`Socket.IO server running at http://localhost:3000/`);
