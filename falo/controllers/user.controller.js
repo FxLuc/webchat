@@ -98,27 +98,31 @@ const createChatRoom = async (req, res, next) => {
         .find({ email: { $in: [ req.body.email, req.user.email ]}})
         .populate('idUser')
         .then( data => {
-            if ( data) {
+            if ( data.length == 2) {
                 user_to = data[0]
                 user_sender = data[1]
-                return;
+                return
             }
         })
     let chat_room_not_found = true
-    // if (user_sender_data.chatRoomList && user_to_data.chatRoomList) {
-    //     user_sender_data.chatRoomList.forEach(chat_room_sender => {
-    //         user_to_data.chatRoomList.forEach(chat_room_to => {
-    //             if (chat_room_sender.idChatRoom == chat_room_to.idChatRoom) {
-    //                 chat_room_not_found = false
-    //                 console.log(`They are chat in here, respon to home page: ${chat_room_to.idChatRoom}`)
-    //             }
-    //         })
-    //     })
-    // }
+    if (user_to.chatRoomList.length > 0 && user_sender.chatRoomList.length > 0) {
+        user_sender.chatRoomList.forEach(chat_room_sender => {
+            user_to.chatRoomList.forEach(chat_room_to => {
+                if (chat_room_sender.toString() == chat_room_to.toString()) {
+                    chat_room_not_found = false
+                    ChatRoom.findById(chat_room_to).then( chat_room => {
+                        console.log(`They are chat in here, respon to home page: ${chat_room.id}`)
+                        res.status(200).json({ id: chat_room.id, name: chat_room.name})
+                    })
+
+                }
+            })
+        })
+    }
+
     if (chat_room_not_found) {
         let chatRoom = new ChatRoom()
         chatRoom.accessList = [user_to.id, user_sender.id]
-        console.log(chatRoom.accessList);
         chatRoom.name = user_to.idUser.email + ' AND ' + user_sender.idUser.email
         chatRoom.save(err => {
             if (err) throw err
@@ -130,7 +134,8 @@ const createChatRoom = async (req, res, next) => {
                 )
                 .exec( err => {
                     if (err) throw err
-                    return
+                    console.log(`They are not here, respon to home page new chat room id: ${chatRoom.id}`)
+                    res.status(200).json({ id: chatRoom.id, name: chatRoom.name})
                 })
         })
     }

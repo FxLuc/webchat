@@ -7,13 +7,13 @@ module.exports = app => {
 	require('../config/passport')(passport)
 
 	app.use(session({
+		name: 'chat-app-session',
 		secret: 'NTA&LTV&LTL_often127',
 		resave: true,
 		saveUninitialized: true,
 	}))
 	app.use(passport.initialize())
 	app.use(passport.session())
-
 	app.use(flash());
 
 	app.get('/', forwardAuthenticated, (req, res, next) => {
@@ -28,7 +28,6 @@ module.exports = app => {
 
 	app.get('/signout', ensureAuthenticated, (req, res, next) => {
 		req.logout()
-		req.flash('success_msg', 'Bạn đã đăng xuất')
 		res.redirect('/');
 	});
 
@@ -38,11 +37,10 @@ module.exports = app => {
 
 	app.post('/signup', userController.signUp)
 
-	app.get('/home', ensureAuthenticated, userController.home)
-
 	app.get('/profile', ensureAuthenticated, userController.profile);
 	app.post('/profile', ensureAuthenticated, userController.updateProfile)
 
-	app.post('/create_chat_room', ensureAuthenticated, userController.createChatRoom)
+	app.get('/home', ensureAuthenticated, userController.home)
 	
+	app.post('/chatroom', ensureAuthenticated, userController.createChatRoom)
 };

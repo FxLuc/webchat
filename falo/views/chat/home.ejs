@@ -64,19 +64,14 @@
                   </tr>
 
                   <tr>
-                    <td class="p-0">
-                      <a class="btn w-100 tabe-hover-row">
-                        <%= user_profile.name %>
-                      </a>
-                    </td>
-                  </tr>
-
-                  <tr>
                     <td class="text-center">
-                      <form id="form_find_email" class="form p-3 bg-light" action="create_chat_room" method="POST"
-                        onsubmit="createChatRoom(form_find_email.email.value)">
+                      <form id="form_find_email" class="form p-3 bg-light" action="javascript:;" onsubmit="createChatRoom(form_find_email.email.value)">
                         <div class="form-group">
-                          <small class="form-text text-left text-danger form-feedback"></small>
+                          <small class="form-text text-left text-danger form-feedback"> 
+                            <% if (typeof(messages) != 'undefined') { %>
+                              <%= message %>
+                            <% } %>
+                          </small>
                           <div class="input-group">
                             <input class="form-control" type="email" id="email" name="email" placeholder="Nhập email..."
                               required>
@@ -137,20 +132,21 @@
         var chatroom_id = ''
 
         function createChatRoom(email) {
-          chatroom_id = email.substr(0, email.lastIndexOf("@")) + user_profile.email.substr(0, email.lastIndexOf("@"))
-          chatroom_table.insertRow(0).innerHTML =
-            `<td class="p-0">
-              <a class="btn w-100 tabe-hover-row">
-                ${email}
-              </a>
-            </td>`
-          joinChatRoom(chatroom_id)
+          clearChatbox()
+          $.post("/chatroom", { email: email }, (chatroom, status) => {
+            console.log(chatroom);
+            console.log(status);
+            chatroom_table.insertRow(0).innerHTML =
+              `<td class="p-0">
+                <a class="btn w-100 tabe-hover-row">
+                  ${chatroom.name}
+                </a>
+              </td>`
+            joinChatRoom(chatroom.id)
+          })
         }
 
         function joinChatRoom(chatroom_id_join) {
-          // socket.emit(chatroom_id, { room: chatroom_id, sender: user_profile.name, from: user._id, msg: "Leaving this room", leave: true})
-          clearChatbox()
-          // socket.emit('chat_room', chatroom_id_join)
           socket.emit('chat_room', chatroom_id_join)
           socket.on('chat_message', data => receiveMessage(data))
           chatroom_id = chatroom_id_join
