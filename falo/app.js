@@ -54,14 +54,6 @@ io.on('connection', (socket) => {
     socket.join(room_id)
     socket_room_id = room_id
     io.sockets.in(room_id).emit('chat_message', { room: room_id, sender: '', from: '', msg: "join"});
-    // io.in(room_id).emit('chat_message', true)
-    // socket.on(room_id, data => {
-    //   if (data.leave) {
-    //     socket.off(data.room, data);
-    //   } else {
-    //     io.emit(data.room, data);
-    //   }
-    // })
   })
   socket.on('chat', data => {
     io.sockets.in(data.room).emit('chat_message', data);

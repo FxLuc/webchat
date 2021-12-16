@@ -42,4 +42,7 @@ module.exports = app => {
 
 	app.get('/profile', ensureAuthenticated, userController.profile);
 	app.post('/profile', ensureAuthenticated, userController.updateProfile)
+
+	app.post('/create_chat_room', ensureAuthenticated, userController.createChatRoom)
+	
 };

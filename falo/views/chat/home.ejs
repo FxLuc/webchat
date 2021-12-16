@@ -73,7 +73,7 @@
 
                   <tr>
                     <td class="text-center">
-                      <form id="form_find_email" class="form p-3 bg-light" action="javascript:;" method="POST"
+                      <form id="form_find_email" class="form p-3 bg-light" action="create_chat_room" method="POST"
                         onsubmit="createChatRoom(form_find_email.email.value)">
                         <div class="form-group">
                           <small class="form-text text-left text-danger form-feedback"></small>
@@ -137,7 +137,7 @@
         var chatroom_id = ''
 
         function createChatRoom(email) {
-          chatroom_id = email.substr(0, email.lastIndexOf("@"))
+          chatroom_id = email.substr(0, email.lastIndexOf("@")) + user_profile.email.substr(0, email.lastIndexOf("@"))
           chatroom_table.insertRow(0).innerHTML =
             `<td class="p-0">
               <a class="btn w-100 tabe-hover-row">

@@ -36,9 +36,13 @@ const userProfileSchema = mongoose.Schema(
     bio: {
       type: String,
     },
+    chatRoomList: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'ChatRoom'
+    }],
     idUser: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'user'
+      ref: 'User'
     },
   }
 )
