@@ -65,7 +65,7 @@
 
                   <tr>
                     <td class="text-center">
-                      <form id="form_find_email" class="form p-3 bg-light" action="javascript:;" onsubmit="createChatRoom(form_find_email.email.value)">
+                      <form id="form_find_email" class="form p-3 bg-light" action="javascript:;" onsubmit="joinChatRoomByEmail(form_find_email.email.value)">
                         <div class="form-group">
                           <small class="form-text text-left text-danger form-feedback"> 
                             <% if (typeof(messages) != 'undefined') { %>
@@ -119,9 +119,7 @@
       <script src="/socket.io/socket.io.js"></script>
       <script>
         var socket = io()
-        var room = []
         var new_message_id_count = 0
-
         // access ejs to javascript
         const _user = '<%- JSON.stringify(user) %>'
         const _user_profile = '<%- JSON.stringify(user_profile) %>'
@@ -131,11 +129,8 @@
         var chatroom_table = document.getElementById('chatroom_table')
         var chatroom_id = ''
 
-        function createChatRoom(email) {
-          clearChatbox()
+        function joinChatRoomByEmail(email) {
           $.post("/chatroom", { email: email }, (chatroom, status) => {
-            console.log(chatroom);
-            console.log(status);
             if (chatroom.id != '') {
               chatroom_table.insertRow(0).innerHTML =
                 `<td class="p-0">
@@ -143,17 +138,40 @@
                     ${chatroom.name}
                   </a>
                 </td>`
-              joinChatRoom(chatroom.id)
+                clearChatbox()
+                new_message_id_count = 0
+                socket.emit('join_room', chatroom.id)
+                socket.on('chat_message', data => receiveMessage(data))
+                chatroom_id = chatroom.id
             } else {
               showFeedback(true, "Email người dùng không tồn tại")
             }
           })
         }
 
-        function joinChatRoom(chatroom_id_join) {
-          socket.emit('join_room', chatroom_id_join)
-          socket.on('chat_message', data => receiveMessage(data))
-          chatroom_id = chatroom_id_join
+        $.get("/chatroom", (res, status) => {
+            res.forEach( chatroom => {
+              chatroom_table.insertRow(0).innerHTML =
+                `<td class="p-0">
+                  <a class="btn w-100 tabe-hover-row" id="${chatroom._id.toString()}" onclick="joinChatRoomById('${chatroom._id.toString()}')">
+                    ${chatroom.name}
+                  </a>
+                </td>`
+            })
+        })
+
+        function joinChatRoomById(id) {
+          $.post("/chatroomid", { chat_room_id: id, user_profile_id: user_profile._id }, (chatroom, status) => {
+            if (chatroom.id != '') {
+              clearChatbox()
+              new_message_id_count = 0
+              socket.emit('join_room', chatroom.id)
+              socket.on('chat_message', data => receiveMessage(data))
+              chatroom_id = chatroom.id
+            } else {
+              showFeedback(true, "Email người dùng không tồn tại")
+            }
+          })
         }
 
         function sendMessage(input_element) {

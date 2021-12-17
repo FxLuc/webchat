@@ -3,11 +3,11 @@ const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const createError = require('http-errors')
-
+const somethingsaga = '127:D3c0DeD.doc@often127.3eupw'
 
 // mongoose
 const mongoose = require('mongoose')
-mongoose.connect('mongodb+srv://often127:D3c0DeD.doc@often127.3eupw.mongodb.net/final?retryWrites=true&w=majority')
+mongoose.connect(`mongodb+srv://often${somethingsaga}.mongodb.net/webchat?retryWrites=true&w=majority`)
   .then(() => console.log('mongodb connected'))  
   .catch( error => handleError(error))
 
@@ -57,7 +57,7 @@ io.on('connection', (socket) => {
       socket.removeAllListeners(`chat`)
     })
     socket.join(room_id)
-    io.sockets.in(room_id).emit('chat_message', { room: room_id, sender: 'FALO system', from: '', msg: "join"})
+    io.sockets.in(room_id).emit('chat_message', { room: room_id, sender: 'FALO system', from: '', msg: "Enjoy cái moment này!"})
   })
   
   socket.on('chat', data => {

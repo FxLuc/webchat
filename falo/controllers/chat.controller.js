@@ -1,4 +1,5 @@
-const { User, UserProfile, ChatRoom } = require('../models');
+const { User, UserProfile, ChatRoom } = require('../models')
+const mongoose = require('mongoose')
 
 const joinChatRoom = async (req, res, next) => {
     let user_to, user_sender
@@ -13,7 +14,7 @@ const joinChatRoom = async (req, res, next) => {
         })
     })
     if (typeof (user_to) != 'undefined' && user_to != user_sender) return checkValidRoom(res, user_to, user_sender)
-    res.status(200).json({ id: '', name: 'Not found' })
+    return res.status(200).json({ id: '', name: 'Not found' })
 }
 
 async function checkValidRoom(res, user_to, user_sender) {
@@ -31,17 +32,20 @@ async function checkValidRoom(res, user_to, user_sender) {
     if (chat_room_found) {
         ChatRoom.findById(chat_room_found).then(chat_room => {
             const chat_room_access = chat_room.accessList.find(user_id => user_id.toString() == user_sender.id)
-            if (chat_room_access) {
-                res.status(200).json({ id: chat_room.id, name: chat_room.name })
-            } else {
-                console.log(`Chat room found but you not have access: ${chat_room.id}`)
-                res.status(200).json({ id: '', name: 'Forbidden' })
-            }
+            chat_room_access? res.status(200).json({ id: chat_room.id, name: chat_room.name }) : res.status(200).json({ id: '', name: 'Forbidden' })
         })
     } else {
-        createChatRoom(res, user_to, user_sender)
+        return createChatRoom(res, user_to, user_sender)
     }
 }
+
+const getChatRoom = async (req, res, next) => {
+    await UserProfile.findOne({idUser: req.user.id}).populate('idUser').populate('chatRoomList').then(data => {
+        console.log(data.chatRoomList)
+        return res.status(200).json(data.chatRoomList)
+    })
+}
+
 
 function createChatRoom(res, user_to, user_sender) {
     let chatRoom = new ChatRoom()
@@ -56,11 +60,30 @@ function createChatRoom(res, user_to, user_sender) {
             )
             .exec(_err => {
                 console.log(`Create new chat room id: ${chatRoom.id}`)
-                res.status(200).json({ id: chatRoom.id, name: chatRoom.name })
+                return res.status(200).json({ id: chatRoom.id, name: chatRoom.name })
             })
     })
 }
 
+const joinChatRoomById = async (req, res, next) => {;
+    await ChatRoom
+        .findById(req.body.chat_room_id)
+        .populate('accessList')
+        .then(data => {
+            if (data) {
+                (data.accessList.find(user_profile => user_profile._id.toString() == req.body.user_profile_id))?
+                res.status(200).json({ id: req.body.user_profile_id, name: data.name }) : res.status(200).json({ id: '', name: 'Not found' })
+            } else {
+                return res.status(200).json({ id: '', name: 'Not found' })
+            }
+        })
+        .catch(err => {
+            console.log(err);
+        })
+}
+
 module.exports = {
-    joinChatRoom
+    joinChatRoom,
+    joinChatRoomById,
+    getChatRoom
 }
