@@ -1,5 +1,5 @@
 module.exports = app => {
-	const { userController } = require('../controllers')
+	const { userController, chatController } = require('../controllers')
 	const { ensureAuthenticated, forwardAuthenticated } = require('../middlewares/auth');
 	const flash = require('connect-flash');
 	const session = require('express-session');
@@ -42,5 +42,5 @@ module.exports = app => {
 
 	app.get('/home', ensureAuthenticated, userController.home)
 	
-	app.post('/chatroom', ensureAuthenticated, userController.joinChatRoom)
+	app.post('/chatroom', ensureAuthenticated, chatController.joinChatRoom)
 };

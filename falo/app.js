@@ -57,7 +57,7 @@ io.on('connection', (socket) => {
       socket.removeAllListeners(`chat`)
     })
     socket.join(room_id)
-    io.sockets.in(room_id).emit('chat_message', { room: room_id, sender: '', from: '', msg: "join"})
+    io.sockets.in(room_id).emit('chat_message', { room: room_id, sender: 'FALO system', from: '', msg: "join"})
   })
   
   socket.on('chat', data => {
