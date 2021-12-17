@@ -42,5 +42,5 @@ module.exports = app => {
 
 	app.get('/home', ensureAuthenticated, userController.home)
 	
-	app.post('/chatroom', ensureAuthenticated, userController.createChatRoom)
+	app.post('/chatroom', ensureAuthenticated, userController.joinChatRoom)
 };

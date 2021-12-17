@@ -48,15 +48,29 @@ app.use(function(err, req, res, next) {
 const http = require('http').Server(app);
 const io = require('socket.io')(http);
 
-var socket_room_id = ''
 io.on('connection', (socket) => {
-  socket.on('chat_room', room_id => {
+  socket.on('join_room', room_id => {
+    Array.from(socket.rooms)
+    .filter( it => it !== socket.id)
+    .forEach( id => {
+      socket.leave(id)
+      socket.removeAllListeners(`chat`)
+    })
     socket.join(room_id)
-    socket_room_id = room_id
-    io.sockets.in(room_id).emit('chat_message', { room: room_id, sender: '', from: '', msg: "join"});
+    io.sockets.in(room_id).emit('chat_message', { room: room_id, sender: '', from: '', msg: "join"})
   })
+  
   socket.on('chat', data => {
-    io.sockets.in(data.room).emit('chat_message', data);
+    Array.from(socket.rooms)
+      .filter(it => it !== socket.id)
+      .forEach(id => {
+        io.sockets.in(id).emit('chat_message', data)
+      })
+  })
+
+  socket.on('disconnect', () => {
+    console.log(socket.id + ' ==== diconnected');
+    socket.removeAllListeners()
   })
 })
 

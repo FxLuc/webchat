@@ -136,18 +136,20 @@
           $.post("/chatroom", { email: email }, (chatroom, status) => {
             console.log(chatroom);
             console.log(status);
-            chatroom_table.insertRow(0).innerHTML =
-              `<td class="p-0">
-                <a class="btn w-100 tabe-hover-row">
-                  ${chatroom.name}
-                </a>
-              </td>`
-            joinChatRoom(chatroom.id)
+            if (chatroom.id != '') {
+              chatroom_table.insertRow(0).innerHTML =
+                `<td class="p-0">
+                  <a class="btn w-100 tabe-hover-row">
+                    ${chatroom.name}
+                  </a>
+                </td>`
+              joinChatRoom(chatroom.id)
+            }
           })
         }
 
         function joinChatRoom(chatroom_id_join) {
-          socket.emit('chat_room', chatroom_id_join)
+          socket.emit('join_room', chatroom_id_join)
           socket.on('chat_message', data => receiveMessage(data))
           chatroom_id = chatroom_id_join
         }
