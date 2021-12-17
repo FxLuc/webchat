@@ -54,7 +54,7 @@ io.on('connection', (socket) => {
     .filter( it => it !== socket.id)
     .forEach( id => {
       socket.leave(id)
-      socket.removeAllListeners(`chat`)
+      // socket.removeAllListeners(`chat`)
     })
     socket.join(room_id)
     io.sockets.in(room_id).emit('chat_message', { room: room_id, sender: 'FALO system', from: '', msg: "Enjoy cái moment này!"})
@@ -62,10 +62,15 @@ io.on('connection', (socket) => {
   
   socket.on('chat', data => {
     Array.from(socket.rooms)
-      .filter(it => it !== socket.id)
-      .forEach(id => {
-        io.sockets.in(id).emit('chat_message', data)
-      })
+    .filter(it => it !== socket.id)
+    .forEach(id => {
+      io.sockets.to(id).emit('chat_message', data)
+    })
+  })
+
+  socket.on('leave_room', room_id => {
+    socket.leave(room_id)
+    socket.removeAllListeners(`chat`)
   })
 
   socket.on('disconnect', () => {
@@ -73,6 +78,8 @@ io.on('connection', (socket) => {
     socket.removeAllListeners()
   })
 })
+
+
 
 http.listen(3000, () => {
   console.log(`Socket.IO server running at http://localhost:3000/`);

@@ -1,6 +1,6 @@
 {
   "name": "falo",
-  "version": "0.1.0",
+  "version": "0.5.2",
   "private": true,
   "scripts": {
     "start": "node ./bin/www"
@@ -34,5 +34,9 @@
   "optionalDependencies": {
     "bufferutil": "^4.0.5",
     "utf-8-validate": "^5.0.7"
-  }
+  },
+  "description": "web chat",
+  "main": "app.js",
+  "author": "",
+  "license": "ISC"
 }

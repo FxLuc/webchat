@@ -176,7 +176,8 @@
 
         function sendMessage(input_element) {
           if (input_element.value.trim()) {
-            socket.emit('chat', { room: chatroom_id, sender: user_profile.name, from: user._id, msg: input_element.value})
+            console.log(chatroom_id);
+            socket.emit('chat', {room: chatroom_id, sender: user_profile.name, from: user._id, msg: input_element.value})
             input_element.value = ''
           }
         }
