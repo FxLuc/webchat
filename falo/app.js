@@ -50,29 +50,20 @@ const io = require('socket.io')(http);
 
 io.on('connection', (socket) => {
   socket.on('join_room', room_id => {
-    Array.from(socket.rooms)
-    .filter( it => it !== socket.id)
-    .forEach( id => {
-      socket.leave(id)
-      socket.removeAllListeners(`chat`)
-    })
     socket.join(room_id)
-    io.sockets.in(room_id).emit('chat_message', { room: room_id, sender: 'FALO system', from: '', msg: "Enjoy cái moment này!"})
+    io.to(room_id).emit('chat_message', { room: room_id, sender: 'FALO system', from: '', msg: "Enjoy cái moment này!"})
   })
   
   socket.on('chat', data => {
-    Array.from(socket.rooms)
-    .filter(it => it !== socket.id)
-    .forEach(id => {
-      io.sockets.to(id).emit('chat_message', data)
-    })
+      console.log(data.room);
+      io.to(data.room).emit('chat_message', data)
   })
 
   socket.on('leave_room', room_id => {
     socket.leave(room_id)
     socket.removeAllListeners(`chat`)
   })
-
+  
   socket.on('disconnect', () => {
     console.log(socket.id + ' ==== diconnected');
     socket.removeAllListeners()
