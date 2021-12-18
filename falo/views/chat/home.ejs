@@ -3,35 +3,36 @@
 
 <head>
   <%- include('../link/head.ejs'); %>
-    <style>
-      .rouded-recieve {
-        border-radius: 15px 30px 30px 15px;
-      }
+    <%- include('../link/script.ejs'); %>
+      <style>
+        .rouded-recieve {
+          border-radius: 15px 30px 30px 15px;
+        }
 
-      .rouded-send {
-        border-radius: 30px 15px 15px 30px;
-      }
+        .rouded-send {
+          border-radius: 30px 15px 15px 30px;
+        }
 
-      .tabe-hover-row {
-        text-align: left;
-        transition: 200ms;
-      }
+        .tabe-hover-row {
+          text-align: left;
+          transition: 200ms;
+        }
 
-      .tabe-hover-row:hover {
-        background-color: #fff;
-        color: #17a2b8;
-        transition: 200ms;
-      }
+        .tabe-hover-row:hover {
+          background-color: #fff;
+          color: #17a2b8;
+          transition: 200ms;
+        }
 
-      .rouded-0 {
-        border: 0;
-      }
+        .rouded-0 {
+          border: 0;
+        }
 
-      .text-light-not-important {
-        color: #f8f9fa;
-      }
-    </style>
-    <title>Falo</title>
+        .text-light-not-important {
+          color: #f8f9fa;
+        }
+      </style>
+      <title>Falo</title>
 </head>
 
 <body style="height: 100vh; position: relative;">
@@ -39,7 +40,6 @@
     <div id="main">
       <!-- nav -->
       <%- include('./nav.ejs'); %>
-
         <div class="container-fluid">
           <div class="row flex-lg-nowrap">
 
@@ -56,21 +56,14 @@
               <table class="table" style="direction: ltr;" id="chatroom_table" aria-hidden="true">
                 <tbody>
                   <tr>
-                    <td class="p-0">
-                      <a class="btn w-100 tabe-hover-row">
-                        <%= user_profile.name %>
-                      </a>
-                    </td>
-                  </tr>
-
-                  <tr>
                     <td class="text-center">
-                      <form id="form_find_email" class="form p-3 bg-light" action="javascript:;" onsubmit="joinChatRoomByEmail(form_find_email.email.value)">
+                      <form id="form_find_email" class="form p-3 bg-light" action="javascript:;"
+                        onsubmit="joinChatRoomByEmail(form_find_email.email.value)">
                         <div class="form-group">
-                          <small class="form-text text-left text-danger form-feedback"> 
-                            <% if (typeof(messages) != 'undefined') { %>
+                          <small class="form-text text-left text-danger form-feedback">
+                            <% if (typeof(messages) !='undefined' ) { %>
                               <%= message %>
-                            <% } %>
+                                <% } %>
                           </small>
                           <div class="input-group">
                             <input class="form-control" type="email" id="email" name="email" placeholder="Nhập email..."
@@ -84,14 +77,12 @@
                       </form>
                     </td>
                   </tr>
-
                 </tbody>
               </table>
             </div>
 
             <!-- chat box -->
             <div class="col-12 col-lg-7 col-xl-8 bg-white">
-
               <div class="row" style="height: calc(100vh - 124px); overflow-y: scroll;">
                 <table class="table" id="chatbox_table" aria-hidden="true">
                   <tbody>
@@ -108,160 +99,13 @@
                       class="fas fa-paper-plane"></em> SEND</button>
                 </form>
               </div>
-
             </div>
           </div>
         </div>
     </div>
-
-    <%- include('../link/script.ejs'); %>
-      <script src="/javascripts/form_validate.js"></script>
-      <script src="/socket.io/socket.io.js"></script>
-      <script>
-        var socket = io()
-        var new_message_id_count = 0
-        // access ejs to javascript
-        const _user = '<%- JSON.stringify(user) %>'
-        const _user_profile = '<%- JSON.stringify(user_profile) %>'
-        var user = JSON.parse(_user)
-        var user_profile = JSON.parse(_user_profile)
-        var chatbox_table = document.getElementById('chatbox_table')
-        var chatroom_table = document.getElementById('chatroom_table')
-        var chatroom_id_list = []
-        var chatroom_id_list_index = 0
-
-        function joinChatRoomByEmail(email) {
-          $.post("/chatroom", { email: email }, (chatroom, status) => {
-            if (chatroom.id != '') {
-              chatroom_table.insertRow(0).innerHTML =
-                `<td class="p-0">
-                  <a class="btn w-100 tabe-hover-row">
-                    ${chatroom.name}
-                  </a>
-                </td>`
-                clearChatbox()
-                new_message_id_count = 0
-                socket.emit('join_room', chatroom.id)
-                socket.on('chat_message', data => receiveMessage(data))
-                chatroom_id = chatroom.id
-            } else {
-              showFeedback(true, "Email người dùng không tồn tại")
-            }
-          })
-        }
-
-        $.get("/chatroom", (res, status) => {
-            res.forEach( chatroom => {
-              chatroom_table.insertRow(0).innerHTML =
-                `<td class="p-0">
-                  <a class="btn w-100 tabe-hover-row" id="${chatroom._id.toString()}" onclick="joinChatRoomById('${chatroom._id.toString()}')">
-                    ${chatroom.name}
-                  </a>
-                </td>`
-            })
-        })
-
-        function joinChatRoomById(id) {
-          $.post("/chatroomid", { chat_room_id: id, user_profile_id: user_profile._id }, (chatroom, status) => {
-            if (chatroom.id != '') {
-              clearChatbox()
-              new_message_id_count = 0
-              const chatroom_id_list_found = chatroom_id_list.findIndex(_id => _id == chatroom.id)
-              if (chatroom_id_list_found != -1) {
-                chatroom_id_list_index = chatroom_id_list_found
-              } else {
-                socket.emit('join_room', chatroom.id)
-                chatroom_id_list.push(chatroom.id)
-                chatroom_id_list_index = chatroom_id_list.length-1
-              }
-            } else {
-              showFeedback(true, "Email người dùng không tồn tại")
-            }
-          })
-        }
-
-        socket.on('chat_message', data => receiveMessage(data))
-
-        function sendMessage(input_element) {
-          if (input_element.value.trim()) {
-            console.log(chatroom_id_list[chatroom_id_list_index]);
-            socket.emit('chat', {room: chatroom_id_list[chatroom_id_list_index], sender: user_profile.name, from: user._id, msg: input_element.value})
-            input_element.value = ''
-          }
-        }
-
-        function receiveMessage(data) {
-          new_message_id_count++
-          const new_mesage_class = `new_message_id_${new_message_id_count}`
-          if (data.from == user._id) {
-            chatbox_table.insertRow(-1).innerHTML =
-              `<td class="col text-right" id="${new_mesage_class}">
-            <div class="text-secondary px-2 ">${data.sender}</div>
-            <div class="col btn btn-info w-75 text-right rouded-send">
-                ${data.msg}
-            </div>
-        </td>`
-          } else {
-            chatbox_table.insertRow(-1).innerHTML =
-              `<td class="col text-left" id="${new_mesage_class}">
-                <div class="text-secondary px-2 ">${data.sender}</div>
-                <div class="col btn btn-secondary w-75 text-left rouded-recieve">
-                    <p>${data.msg} </p>
-                </div>
-              </td>`
-          }
-          document.getElementById(new_mesage_class).scrollIntoView()
-        }
-
-        function clearChatbox() {
-          for (let i = chatbox_table.rows.length - 1; i >= 0; i--) chatbox_table.deleteRow(i)
-        }
-
-        const inputElement = document.forms['form_find_email']['email']
-        inputRegex(/\S+@\S+\.\S+/, '*Email bạn nhập không đúng')
-
-        function inputRegex(regex, feedback) {
-          inputElement.addEventListener('input', e => {
-            const inputElementValue = e.target.value.trim().valueOf()
-            const inValid = !(regex.test(inputElementValue))
-            showFeedback(inValid, feedback)
-          })
-          inputElement.addEventListener('blur', e => {
-            const inputElementValue = e.target.value.trim().valueOf()
-            const inValid = (inputElementValue != '' && !(regex.test(inputElementValue)))
-            inValid ? showFeedback(inValid, feedback) : {}
-          })
-        }
-
-        function showFeedback(inValid, feedback) {
-          let inputFeedback = inputElement.parentElement.querySelector('.form-feedback')
-          inputFeedback == null ? inputFeedback = inputElement.parentElement.parentElement.querySelector('.form-feedback') : {}
-          let index = validateArray.findIndex(validate => validate.formID == formID)
-          if (inValid) {
-            inputFeedback.innerHTML = feedback
-            inputElement.classList.remove('is-valid')
-            inputElement.classList.add('is-invalid')
-          } else {
-            inputFeedback.innerHTML = ''
-            inputElement.classList.remove('is-invalid')
-            inputElement.classList.add('is-valid')
-          }
-        }
-
-        // remove feedback invalid 
-        inputElement.addEventListener('blur', e => {
-          inputElement.parentElement.parentElement.querySelector('.form-feedback').innerHTML = ''
-          inputElement.classList.remove('is-invalid')
-        })
-
-        // sidebar
-        function sidebar_toogle() {
-          $("#main").toggleClass('w-75');
-          $("#sidebar").toggleClass('d-block');
-          $("#sidebar-close").toggleClass('d-block');
-          $("#nav-sidebar-close").toggleClass('d-none');
-        }
-      </script>
+    <script src="/javascripts/form_validate.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <%- include('./script.ejs'); %>
 </body>
 
 </html>

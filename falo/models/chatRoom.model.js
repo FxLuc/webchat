@@ -8,6 +8,14 @@ const ChatRoomSchema = mongoose.Schema({
     name: {
         type: String
     },
+    messageList: [{
+        from: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'UserProfile'
+        },
+        sender: String,
+        message: String
+    }]
 }, { timestamps: true });
 
 const ChatRoom = mongoose.model('ChatRoom', ChatRoomSchema);

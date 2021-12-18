@@ -1,0 +1,215 @@
+<script>
+    var socket = io()
+    var new_message_id_count = 0
+    // access ejs to javascript
+    const _user = '<%- JSON.stringify(user) %>'
+    const _user_profile = '<%- JSON.stringify(user_profile) %>'
+    var user = JSON.parse(_user)
+    var user_profile = JSON.parse(_user_profile)
+    var chatbox_table = document.getElementById('chatbox_table')
+    var chatroom_table = document.getElementById('chatroom_table')
+    var chatroom_id_list = []
+    var chatroom_id_list_index = 0
+
+    function joinChatRoomByEmail(email) {
+        $.post("/chatroom/email", { email: email }, (chatroom, status) => {
+            if (chatroom.id != '') {
+                chat_room_id = chatroom.id.toString()
+                chatroom_table.insertRow(0).innerHTML =
+                `<td class="row w-100 justify-content-between m-0 p-0" >
+                    <a class="col btn tabe-hover-row mr-0" id="${chat_room_id}" onclick="joinChatRoomById('${chat_room_id}')">
+                        ${chatroom.name}
+                    </a>
+                    <button type="button" class="col-2 col-md-1 btn tabe-hover-row text-right" id="open_model_${chat_room_id}" onclick="$('#modal_${chat_room_id}').modal();">
+                        <em class="fas fa-edit"></em>
+                    </button>
+                    <div class="modal fade" id="modal_${chat_room_id}">
+                        <div class="modal-dialog">
+                        <form class="modal-content" id="form_rename_${chat_room_id}" action="javascript:;" onsubmit="renameChatRoom('${chat_room_id}', form_rename_${chat_room_id})">
+                            <div class="modal-header">
+                            <h4 class="modal-title">Thay đổi tên cuộc trò chuyện</h4>
+                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                            </div>
+                            <div class="modal-body">
+                            <label for="new_name">Khi bạn xác nhận, tên mới sẽ hiển thị với tất cả thành viên trong cuộc trò chuyện.</label>
+                            <input type="text" class="form-control" name="new_name" id="new_name" value="${chatroom.name}">
+                            </div>
+                            <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
+                            <button type="submit" class="btn btn-info">Thay đổi</button>
+                            </div>
+                        </form>
+                        </div>
+                    </div>
+                </td>`
+                clearChatbox()
+                new_message_id_count = 0
+                socket.emit('join_room', chatroom.id)
+                chatroom_id_list.push(chatroom.id)
+                chatroom_id_list_index = chatroom_id_list.length - 1
+            } else {
+                showFeedback('form_find_email', 'email', true, "Email người dùng không tồn tại")
+            }
+        })
+    }
+
+    $.get("/chatroom", (res, status) => {
+        res.forEach(chatroom => {
+            chat_room_id = chatroom._id.toString()
+            chatroom_table.insertRow(0).innerHTML =
+            `<td class="row w-100 justify-content-between m-0 p-0" >
+              <a class="col btn tabe-hover-row mr-0" id="${chat_room_id}" onclick="joinChatRoomById('${chat_room_id}')">
+                ${chatroom.name}
+              </a>
+              <button type="button" class="col-2 col-md-1 btn tabe-hover-row text-right" id="open_model_${chat_room_id}" onclick="$('#modal_${chat_room_id}').modal();">
+                <em class="fas fa-edit"></em>
+              </button>
+              <div class="modal fade" id="modal_${chat_room_id}">
+                <div class="modal-dialog">
+                  <form class="modal-content" id="form_rename_${chat_room_id}" action="javascript:;" onsubmit="renameChatRoom('${chat_room_id}', form_rename_${chat_room_id})">
+                    <div class="modal-header">
+                      <h4 class="modal-title">Thay đổi tên cuộc trò chuyện</h4>
+                      <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                      <label for="new_name">Khi bạn xác nhận, tên mới sẽ hiển thị với tất cả thành viên trong cuộc trò chuyện.</label>
+                      <input type="text" class="form-control" name="new_name" id="new_name" value="${chatroom.name}">
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
+                      <button type="submit" class="btn btn-info">Thay đổi</button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </td>`
+        })
+    })
+
+    function joinChatRoomById(id) {
+        $.post("/chatroom/id", { chat_room_id: id, user_profile_id: user_profile._id }, (chatroom, status) => {
+            if (chatroom.id != '') {
+                console.log(chatroom)
+                new_message_id_count = 0
+                clearChatbox()
+                const chatroom_id_list_found = chatroom_id_list.findIndex(_id => _id == chatroom.id)
+                if (chatroom_id_list_found != -1) {
+                    chatroom_id_list_index = chatroom_id_list_found
+                } else {
+                    socket.emit('join_room', chatroom.id)
+                    chatroom_id_list.push(chatroom.id)
+                    chatroom_id_list_index = chatroom_id_list.length - 1
+                }
+                chatroom.messageList.forEach(data => receiveMessage(data))
+            } else {
+                console.log(false);
+            }
+        })
+    }
+
+    socket.on('chat_message', data => receiveMessage(data))
+
+    function sendMessage(input_element) {
+        if (input_element.value.trim()) {
+            console.log(chatroom_id_list[chatroom_id_list_index]);
+            socket.emit('chat', { room: chatroom_id_list[chatroom_id_list_index], sender: user_profile.name, from: user_profile._id, message: input_element.value })
+            $.post("/chatroom/send", {
+                chat_room_id: chat_room_id,
+                from: user_profile._id,
+                sender: user_profile.name,
+                message: input_element.value
+            }, (chatroom, status) => {
+                console.log(chatroom, status);
+            })
+            input_element.value = ''
+        }
+    }
+
+    function receiveMessage(data) {
+        new_message_id_count++
+        const new_mesage_class = `new_message_id_${new_message_id_count}`
+        if (data.from == user_profile._id) {
+            chatbox_table.insertRow(-1).innerHTML =
+                `<td class="col text-right" id="${new_mesage_class}">
+            <div class="text-secondary px-2 ">${user_profile.name}</div>
+            <div class="col btn btn-info w-75 text-right rouded-send">
+              ${data.message}
+            </div>
+          </td>`
+        } else {
+            chatbox_table.insertRow(-1).innerHTML =
+                `<td class="col text-left" id="${new_mesage_class}">
+            <div class="text-secondary px-2 ">${data.sender}</div>
+            <div class="col btn btn-secondary w-75 text-left rouded-recieve">
+              ${data.message}
+            </div>
+          </td>`
+        }
+        document.getElementById(new_mesage_class).scrollIntoView()
+    }
+
+    function renameChatRoom(chat_room_id, form_rename) {
+        $.post("/chatroom/rename", {
+            chat_room_id: chat_room_id,
+            chat_room_new_name: form_rename.new_name.value,
+            user_profile_id: user_profile._id.toString()
+        }, (chatroom, status) => {
+            if (chatroom.id != '') {
+                $(`#${chat_room_id}`)[0].innerHTML = form_rename.new_name.value
+                $('#modal_' + chat_room_id).modal('hide')
+            } else {
+                showFeedback('form_rename_' + chat_room_id, 'new_name', true, chatroom.name)
+            }
+        })
+    }
+
+    function clearChatbox() {
+        for (let i = chatbox_table.rows.length - 1; i >= 0; i--) chatbox_table.deleteRow(i)
+    }
+
+    inputRegex(/\S+@\S+\.\S+/, '*Email bạn nhập không đúng')
+    function inputRegex(regex, feedback) {
+        const inputElement = document.forms['form_find_email']['email']
+        inputElement.addEventListener('input', e => {
+            const inputElementValue = e.target.value.trim().valueOf()
+            const inValid = !(regex.test(inputElementValue))
+            showFeedback('form_find_email', 'email', inValid, feedback)
+        })
+        inputElement.addEventListener('blur', e => {
+            const inputElementValue = e.target.value.trim().valueOf()
+            const inValid = (inputElementValue != '' && !(regex.test(inputElementValue)))
+            inValid ? showFeedback('form_find_email', 'email', inValid, feedback) : {}
+        })
+    }
+
+    function showFeedback(formID, inputID, inValid, feedback) {
+        const inputElement = document.forms[formID][inputID]
+        let inputFeedback = inputElement.parentElement.querySelector('.form-feedback')
+        inputFeedback == null ? inputFeedback = inputElement.parentElement.parentElement.querySelector('.form-feedback') : {}
+        inputFeedback == null ? inputFeedback = inputElement.parentElement.parentElement.parentElement.querySelector('.form-feedback') : {}
+        let index = validateArray.findIndex(validate => validate.formID == formID)
+        if (inValid) {
+            inputFeedback.innerHTML = feedback
+            inputElement.classList.remove('is-valid')
+            inputElement.classList.add('is-invalid')
+        } else {
+            inputFeedback.innerHTML = ''
+            inputElement.classList.remove('is-invalid')
+            inputElement.classList.add('is-valid')
+        }
+    }
+
+    // remove feedback invalid 
+    document.forms['form_find_email']['email'].addEventListener('blur', e => {
+        document.forms['form_find_email']['email'].parentElement.parentElement.querySelector('.form-feedback').innerHTML = ''
+        document.forms['form_find_email']['email'].classList.remove('is-invalid')
+    })
+
+    // sidebar
+    function sidebar_toogle() {
+        $("#main").toggleClass('w-75');
+        $("#sidebar").toggleClass('d-block');
+        $("#sidebar-close").toggleClass('d-block');
+        $("#nav-sidebar-close").toggleClass('d-none');
+    }
+</script>
