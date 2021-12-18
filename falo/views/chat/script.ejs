@@ -12,22 +12,23 @@
     var chatroom_id_list = []
     var chatroom_id_list_index = 0
     var chatroom_count = 0
+    var chat_room_id
 
     function joinChatRoomByEmail(email) {
         $.post("/chatroom/email", { email: email }, (chatroom, status) => {
             if (chatroom.id != '') {
-                let chat_room_id = chatroom.id.toString()
+                let room_id = chatroom.id.toString()
                 chatroom_table.insertRow(0).innerHTML =
                 `<td class="row w-100 justify-content-between m-0 p-0" >
-                    <a class="col btn tabe-hover-row mr-0" id="${chat_room_id}" onclick="joinChatRoomById('${chat_room_id}')">
+                    <a class="col btn tabe-hover-row mr-0" id="${room_id}" onclick="joinChatRoomById('${room_id}')">
                         ${chatroom.name}
                     </a>
-                    <button type="button" class="col-2 col-md-1 btn tabe-hover-row text-right" id="open_model_${chat_room_id}" onclick="$('#modal_${chat_room_id}').modal();">
+                    <button type="button" class="col-2 col-md-1 btn tabe-hover-row text-right" id="open_model_${room_id}" onclick="$('#modal_${room_id}').modal();">
                         <em class="fas fa-edit"></em>
                     </button>
-                    <div class="modal fade" id="modal_${chat_room_id}">
+                    <div class="modal fade" id="modal_${room_id}">
                         <div class="modal-dialog">
-                        <form class="modal-content" id="form_rename_${chat_room_id}" action="javascript:;" onsubmit="renameChatRoom('${chat_room_id}', form_rename_${chat_room_id})">
+                        <form class="modal-content" id="form_rename_${room_id}" action="javascript:;" onsubmit="renameChatRoom('${room_id}', form_rename_${room_id})">
                             <div class="modal-header">
                             <h4 class="modal-title">Thay đổi tên cuộc trò chuyện</h4>
                             <button type="button" class="close" data-dismiss="modal">&times;</button>
@@ -66,6 +67,7 @@
                 if (chatroom_id_list_found != -1) {
                     chatroom_id_list_index = chatroom_id_list_found
                 } else {
+                    chat_room_id = chatroom.id
                     socket.emit('join_room', chatroom.id)
                     chatroom_id_list.push(chatroom.id)
                     chatroom_id_list_index = chatroom_id_list.length - 1
@@ -100,19 +102,27 @@
         if (data.from == user_profile._id) {
             chatbox_table.insertRow(-1).innerHTML =
                 `<td class="col text-right" id="${new_mesage_class}">
-            <div class="text-secondary px-2 ">${user_profile.name}</div>
-            <div class="col btn btn-info w-75 text-right rouded-send">
-              ${data.message}
-            </div>
-          </td>`
+                    <div class="text-secondary px-2 ">${user_profile.name}</div>
+                    <div class="col btn btn-info w-75 text-right rouded-send">
+                    ${data.message}
+                    </div>
+                </td>`
+        } else if (data.from == 'system') {
+            chatbox_table.insertRow(-1).innerHTML =
+                `<td class="col text-center" id="${new_mesage_class}">
+                    <div class="text-secondary">${data.sender}</div>
+                    <div class="col">
+                    ${data.message}
+                    </div>
+                </td>`
         } else {
             chatbox_table.insertRow(-1).innerHTML =
                 `<td class="col text-left" id="${new_mesage_class}">
-            <div class="text-secondary px-2 ">${data.sender}</div>
-            <div class="col btn btn-secondary w-75 text-left rouded-recieve">
-              ${data.message}
-            </div>
-          </td>`
+                    <div class="text-secondary px-2 ">${data.sender}</div>
+                    <div class="col btn btn-secondary w-75 text-left rouded-recieve">
+                    ${data.message}
+                    </div>
+                </td>`
         }
         document.getElementById(new_mesage_class).scrollIntoView()
     }
@@ -136,21 +146,21 @@
         await data.forEach(async chatroom => {
             chatroom_count++
             $('#chatroom_count')[0].innerHTML = `${chatroom_count} <em class="fas fa-comments"></em>`
-            let chat_room_id = chatroom._id.toString()
+            let chat_room = chatroom._id.toString()
             chatroom_member = chatroom.accessList.find(access_id => access_id != user_profile._id)
             await $.post("/profile/findname", { user_profile_id: chatroom_member }, (username, status) => chatroom_member = username)
             chatroom_table.insertRow(0).innerHTML =
             `<td class="row w-100 justify-content-between m-0 p-0" >
-              <a class="col btn tabe-hover-row mr-0" id="${chat_room_id}" onclick="joinChatRoomById('${chat_room_id}')">
-                <p class="mb-0"><strong id="name_${chat_room_id}">${chatroom.name}</strong> <br>
+              <a class="col btn tabe-hover-row mr-0" id="${chat_room}" onclick="joinChatRoomById('${chat_room}')">
+                <p class="mb-0"><strong id="name_${chat_room}">${chatroom.name}</strong> <br>
                 To: ${chatroom_member}</p>
               </a>
-              <button type="button" class="col-2 col-md-1 btn tabe-hover-row text-right" id="open_model_${chat_room_id}" onclick="$('#modal_${chat_room_id}').modal();">
+              <button type="button" class="col-2 col-md-1 btn tabe-hover-row text-right" id="open_model_${chat_room}" onclick="$('#modal_${chat_room}').modal();">
                 <em class="fas fa-edit"></em>
               </button>
-              <div class="modal fade" id="modal_${chat_room_id}">
+              <div class="modal fade" id="modal_${chat_room}">
                 <div class="modal-dialog">
-                  <form class="modal-content" id="form_rename_${chat_room_id}" action="javascript:;" onsubmit="renameChatRoom('${chat_room_id}', form_rename_${chat_room_id})">
+                  <form class="modal-content" id="form_rename_${chat_room}" action="javascript:;" onsubmit="renameChatRoom('${chat_room}', form_rename_${chat_room})">
                     <div class="modal-header">
                       <h4 class="modal-title">Thay đổi tên cuộc trò chuyện</h4>
                       <button type="button" class="close" data-dismiss="modal">&times;</button>

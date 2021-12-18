@@ -51,7 +51,7 @@ const io = require('socket.io')(http);
 io.on('connection', (socket) => {
   socket.on('join_room', room_id => {
     socket.join(room_id)
-    io.to(room_id).emit('chat_message', { room: room_id, sender: 'FALO', from: 'system', message: "Enjoy cái moment này!"})
+    io.to(room_id).emit('chat_message', { room: room_id, sender: 'FALO', from: 'system', message: "Hãy enjoy cái moment này =))"})
   })
   
   socket.on('chat', data => {
