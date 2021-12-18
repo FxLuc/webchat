@@ -4,7 +4,13 @@
 
 ```console
 git clone https://github.com/often127/webchat.git
+```
+
+```console
 cd falo
+```
+
+```console
 npm start
 ```
 
