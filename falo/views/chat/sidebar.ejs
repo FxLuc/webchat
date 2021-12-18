@@ -1,9 +1,14 @@
 <!-- sidebar -->
-<div class="col-12 col-md-3 col-lg-3 bg-secondary px-0 d-none" id="sidebar" style="position:fixed;z-index:1; overflow-y: scroll; right: 0; height: 100vh;" id="sidebar">
+<div class="col-12 col-md-3 col-lg-3 bg-secondary px-0 d-none" id="sidebar" style="position:fixed; z-index:1;  right: 0; height: 100vh;">
     <div class="col px-0">
       <div class="w-100 tabe-hover-row text-center py-2 bg-info" style="height: 54px;">
-        <a href="#" onclick="sidebar_toogle()" class="btn btn-outline-light" id="sidebar_close" onclick="sidebar_toogle()"><strong><%= user.email %> </strong> <em class="fas fa-chevron-right"></em><em class="fas fa-chevron-right"></em></a>
+        <a href="#" onclick="sidebar_toogle()" class="btn btn-outline-light" id="sidebar_close" onclick="sidebar_toogle()">
+          <strong><%= user.email %> </strong>
+          <em class="fas fa-chevron-right"></em>
+          <em class="fas fa-chevron-right"></em>
+        </a>
       </div>
+      <div style="overflow-y: scroll; height: calc(100vh - 54px);">
       <table class="table" aria-hidden="true">
         <tbody>
           <tr>
@@ -15,66 +20,63 @@
           </tr>
           <tr>
             <td class="p-0">
-              <a class="btn w-100 tabe-hover-row text-light-not-important">
+              <a href="/profile" class="btn w-100 tabe-hover-row text-light-not-important">
                 Tên: <%= user_profile.name %>
               </a>
             </td>
           </tr>
           <tr>
             <td class="p-0">
-              <a class="btn w-100 tabe-hover-row text-light-not-important">
+              <a href="/profile" class="btn w-100 tabe-hover-row text-light-not-important">
                 Ngày sinh: <%= user_profile.dob %>
               </a>
             </td>
           </tr>
           <tr>
             <td class="p-0">
-              <a class="btn w-100 tabe-hover-row text-light-not-important">
+              <a href="/profile" class="btn w-100 tabe-hover-row text-light-not-important">
                 Giới tính: <%= user_profile.gender %>
               </a>
             </td>
           </tr>
           <tr>
-            <td class="p-0">
-              <a class="btn w-100 tabe-hover-row text-light-not-important">
+            <td  class="p-0">
+              <a href="/profile" class="btn w-100 tabe-hover-row text-light-not-important">
                 Địa chỉ: <%= user_profile.contact.address %>
               </a>
             </td>
           </tr>
           <tr>
             <td class="p-0">
-              <a class="btn w-100 tabe-hover-row text-light-not-important">
+              <a href="/profile" class="btn w-100 tabe-hover-row text-light-not-important">
                 Số ĐT: <%= user_profile.contact.tel %>
               </a>
             </td>
           </tr>
           <tr>
             <td class="p-0">
-              <a class="btn w-100 tabe-hover-row text-light-not-important">
+              <a href="/profile" class="btn w-100 tabe-hover-row text-light-not-important">
                 Email khác: <%= user_profile.contact.email %>
               </a>
             </td>
           </tr>
           <tr>
             <td class="p-0">
-              <a class="btn w-100 tabe-hover-row text-light-not-important">
+              <a href="/profile" class="btn w-100 tabe-hover-row text-light-not-important">
                 Link: <%= user_profile.contact.link %>
               </a>
             </td>
           </tr>
           <tr>
             <td class="p-0">
-              <a class="btn w-100 tabe-hover-row text-light-not-important">
+              <a class="btn w-100 text-light-not-important">
                 ID: <%= user_profile.idUser %>
               </a>
             </td>
           </tr>
-          <tr>
-            <td class="p-0">
-              <a href="/signout" class="btn btn-dark w-100 rouded-0">ĐĂNG XUẤT <em class="fas fa-sign-out-alt"></em></a>
-            </td>
-          </tr>
         </tbody>
       </table>
+      <a href="/signout" class="btn btn-dark w-100 rouded-0">ĐĂNG XUẤT <em class="fas fa-sign-out-alt"></em></a>
+      </div>
     </div>
 </div>

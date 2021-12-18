@@ -45,6 +45,7 @@
                     </div>
                 </td>`
                 clearChatbox()
+                $('#chat_with_user')[0].innerText = `${chatroom.name}`
                 new_message_id_count = 0
                 socket.emit('join_room', chatroom.id)
                 chatroom_id_list.push(chatroom.id)
@@ -55,50 +56,12 @@
         })
     }
 
-    $.get("/chatroom",async (data, status) => {
-        await data.forEach(async chatroom => {
-            chatroom_count++
-            $('#chatroom_count')[0].innerHTML = `${chatroom_count} <em class="fas fa-comments"></em>`
-            let chat_room_id = chatroom._id.toString()
-            chatroom_member = chatroom.accessList.find(access_id => access_id != user_profile._id)
-            await $.post("/profile/findname", { user_profile_id: chatroom_member }, (username, status) => chatroom_member = username)
-            console.log(chat_room_id)
-            chatroom_table.insertRow(0).innerHTML =
-            `<td class="row w-100 justify-content-between m-0 p-0" >
-              <a class="col btn tabe-hover-row mr-0" id="${chat_room_id}" onclick="joinChatRoomById('${chat_room_id}')">
-                <p class="mb-0"><strong>${chatroom.name}</strong> <br>
-                To: ${chatroom_member}</p>
-              </a>
-              <button type="button" class="col-2 col-md-1 btn tabe-hover-row text-right" id="open_model_${chat_room_id}" onclick="$('#modal_${chat_room_id}').modal();">
-                <em class="fas fa-edit"></em>
-              </button>
-              <div class="modal fade" id="modal_${chat_room_id}">
-                <div class="modal-dialog">
-                  <form class="modal-content" id="form_rename_${chat_room_id}" action="javascript:;" onsubmit="renameChatRoom('${chat_room_id}', form_rename_${chat_room_id})">
-                    <div class="modal-header">
-                      <h4 class="modal-title">Thay đổi tên cuộc trò chuyện</h4>
-                      <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    </div>
-                    <div class="modal-body">
-                      <label for="new_name">Khi bạn xác nhận, tên mới sẽ hiển thị với tất cả thành viên trong cuộc trò chuyện.</label>
-                      <input type="text" class="form-control" name="new_name" id="new_name" value="${chatroom.name}">
-                    </div>
-                    <div class="modal-footer">
-                      <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
-                      <button type="submit" class="btn btn-info">Thay đổi</button>
-                    </div>
-                  </form>
-                </div>
-              </div>
-            </td>`
-        })
-    })
-
     function joinChatRoomById(id) {
         $.post("/chatroom/id", { chat_room_id: id, user_profile_id: user_profile._id }, (chatroom, status) => {
             if (chatroom.id != '') {
                 new_message_id_count = 0
                 clearChatbox()
+                $('#chat_with_user')[0].innerText = `${chatroom.name}`
                 const chatroom_id_list_found = chatroom_id_list.findIndex(_id => _id == chatroom.id)
                 if (chatroom_id_list_found != -1) {
                     chatroom_id_list_index = chatroom_id_list_found
@@ -118,7 +81,6 @@
 
     function sendMessage(input_element) {
         if (input_element.value.trim()) {
-            console.log(chatroom_id_list[chatroom_id_list_index]);
             socket.emit('chat', { room: chatroom_id_list[chatroom_id_list_index], sender: user_profile.name, from: user_profile._id, message: input_element.value })
             $.post("/chatroom/send", {
                 chat_room_id: chat_room_id,
@@ -162,13 +124,51 @@
             user_profile_id: user_profile._id.toString()
         }, (chatroom, status) => {
             if (chatroom.id != '') {
-                $(`#${chat_room_id}`)[0].innerHTML = form_rename.new_name.value
+                $(`#name_${chat_room_id}`)[0].innerHTML = form_rename.new_name.value
                 $('#modal_' + chat_room_id).modal('hide')
             } else {
                 showFeedback('form_rename_' + chat_room_id, 'new_name', true, chatroom.name)
             }
         })
     }
+
+    $.get("/chatroom",async (data, status) => {
+        await data.forEach(async chatroom => {
+            chatroom_count++
+            $('#chatroom_count')[0].innerHTML = `${chatroom_count} <em class="fas fa-comments"></em>`
+            let chat_room_id = chatroom._id.toString()
+            chatroom_member = chatroom.accessList.find(access_id => access_id != user_profile._id)
+            await $.post("/profile/findname", { user_profile_id: chatroom_member }, (username, status) => chatroom_member = username)
+            chatroom_table.insertRow(0).innerHTML =
+            `<td class="row w-100 justify-content-between m-0 p-0" >
+              <a class="col btn tabe-hover-row mr-0" id="${chat_room_id}" onclick="joinChatRoomById('${chat_room_id}')">
+                <p class="mb-0"><strong id="name_${chat_room_id}">${chatroom.name}</strong> <br>
+                To: ${chatroom_member}</p>
+              </a>
+              <button type="button" class="col-2 col-md-1 btn tabe-hover-row text-right" id="open_model_${chat_room_id}" onclick="$('#modal_${chat_room_id}').modal();">
+                <em class="fas fa-edit"></em>
+              </button>
+              <div class="modal fade" id="modal_${chat_room_id}">
+                <div class="modal-dialog">
+                  <form class="modal-content" id="form_rename_${chat_room_id}" action="javascript:;" onsubmit="renameChatRoom('${chat_room_id}', form_rename_${chat_room_id})">
+                    <div class="modal-header">
+                      <h4 class="modal-title">Thay đổi tên cuộc trò chuyện</h4>
+                      <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                      <label for="new_name">Khi bạn xác nhận, tên mới sẽ hiển thị với tất cả thành viên trong cuộc trò chuyện.</label>
+                      <input type="text" class="form-control" name="new_name" id="new_name" value="${chatroom.name}" required placeholder="Nhập tên mới...">
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
+                      <button type="submit" class="btn btn-info">Thay đổi</button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </td>`
+        })
+    })
 
     function clearChatbox() {
         for (let i = chatbox_table.rows.length - 1; i >= 0; i--) chatbox_table.deleteRow(i)

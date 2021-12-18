@@ -38,21 +38,26 @@
 <body style="height: 100vh; position: relative;">
   <%- include('./sidebar.ejs'); %>
     <div id="main">
-      <!-- nav -->
-      <%- include('./nav.ejs'); %>
-        <div class="container-fluid">
-          <div class="row flex-lg-nowrap">
+      <div class="container-fluid">
+        <div class="row flex-lg-nowrap">
 
-            <!-- side contact -->
-            <div class="col-12 col-lg-5 col-xl-4 px-0 border-right bg-light"
-              style="height: calc(100vh - 54px); overflow-y: scroll; direction: rtl;">
+          <!-- side contact -->
+          <div class="col-12 col-lg-5 col-xl-4 px-0 border-right bg-light">
+            <!-- nav -->
+            <div class="row bg-info px-4 py-2 border-bottom">
+              <h1 class="my-0" style="line-height: 0;">
+                <a class="navbar-brand py-0 ml-1" href="/">
+                  <img src="images/main/logo_F_light.png" width="30" height="30" class="d-inline-block align-top"
+                    alt="FALO logo">
+                  <span class="text-light"
+                    style="font-family: 'Trebuchet MS'; font-size: 35px; line-height: 0.9;">Falo</span>
+                </a>
+              </h1>
+              <div class="btn text-light ml-auto"> 0 <em class="fas fa-users"></em></div>
+              <div class="btn text-light" id="chatroom_count"> 0 <em class="fas fa-comments"></em></div>
+            </div>
 
-              <div class="row ml-2">
-                <div class="col tabe-hover-row text-center"> 3 <em class="fas fa-bell"></em></div>
-                <div class="col tabe-hover-row text-center"> 2 <em class="fas fa-users"></em></div>
-                <div class="col tabe-hover-row text-center" id="chatroom_count"> 0 <em class="fas fa-comments"></em></div>
-              </div>
-
+            <div style="height: calc(100vh - 55px); overflow-y: scroll; direction: rtl;">
               <table class="table" style="direction: ltr;" id="chatroom_table" aria-hidden="true">
                 <tbody>
                   <tr>
@@ -80,28 +85,33 @@
                 </tbody>
               </table>
             </div>
+          </div>
 
-            <!-- chat box -->
-            <div class="col-12 col-lg-7 col-xl-8 bg-white">
-              <div class="row" style="height: calc(100vh - 124px); overflow-y: scroll;">
-                <table class="table" id="chatbox_table" aria-hidden="true">
-                  <tbody>
-                  </tbody>
-                </table>
-              </div>
+          <!-- chat box -->
+          <div class="col-12 col-lg-7 col-xl-8 bg-white">
+            <!-- nav -->
+            <div class="row bg-info pr-4 py-2 border-bottom text-right">
+              <div class="btn text-light" ><strong id="chat_with_user">| Falo connecting people</strong></div>
+              <a href="#" class="btn btn-outline-light ml-auto" id="nav-sidebar-close" onclick="sidebar_toogle()"><strong><%= user.email.substr(0, user.email.lastIndexOf("@")) %> </strong> <em class="fas fa-chevron-right"></em><em class="fas fa-chevron-right"></em></a>
+            </div>
+            <div class="row" style="height: calc(100vh - 125px); overflow-y: scroll;">
+              <table class="table" id="chatbox_table" aria-hidden="true">
+                <tbody>
+                </tbody>
+              </table>
+            </div>
 
-              <div class="">
-                <form id="formChat" class="form row p-3 bg-light" action="javascript:;"
-                  onsubmit="sendMessage(form_message.form[0])">
-                  <input type="text" id="form_message" class="col form-control mr-2" autocomplete="off"
-                    placeholder="Nhập tin nhắn...">
-                  <button type="submit" class="btn btn-info col-4 col-sm-3 col-md-2"><em
-                      class="fas fa-paper-plane"></em> SEND</button>
-                </form>
-              </div>
+            <div class="">
+              <form id="formChat" class="form row p-3 bg-light" action="javascript:;"
+                onsubmit="sendMessage(form_message.form[0])">
+                <input type="text" id="form_message" class="col form-control mr-2" autocomplete="off"
+                  placeholder="Nhập tin nhắn...">
+                <button type="submit" class="btn btn-info col-4 col-sm-3 col-md-2">SEND</button>
+              </form>
             </div>
           </div>
         </div>
+      </div>
     </div>
     <script src="/javascripts/form_validate.js"></script>
     <script src="/socket.io/socket.io.js"></script>
