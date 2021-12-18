@@ -25,13 +25,13 @@ Open your browser: localhost:3000
 <img src="falo/public/images/demo/index_md.JPG" style="width:100%" alt="Index"/>
 
 ### Sign in:
-<img src="falo/public/images/demo/signin_xl.JPG" style="width:100%" alt="Index"/>
+<img src="falo/public/images/demo/signin_xl.JPG" style="width:100%" alt="Sign in"/>
 
 ### Sign up:
-<img src="falo/public/images/demo/signup_xl.JPG" style="width:100%" alt="Index"/>
+<img src="falo/public/images/demo/signup_xl.JPG" style="width:100%" alt="Sign up"/>
 
-### Home:
-<img src="falo/public/images/demo/home_lg.JPG" style="width:100%" alt="Index"/>
+### Chat home:
+<img src="falo/public/images/demo/home_lg.JPG" style="width:100%" alt="Chat home"/>
 
 ----------
 Author:
