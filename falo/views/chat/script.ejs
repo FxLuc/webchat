@@ -6,15 +6,17 @@
     const _user_profile = '<%- JSON.stringify(user_profile) %>'
     var user = JSON.parse(_user)
     var user_profile = JSON.parse(_user_profile)
+
     var chatbox_table = document.getElementById('chatbox_table')
     var chatroom_table = document.getElementById('chatroom_table')
     var chatroom_id_list = []
     var chatroom_id_list_index = 0
+    var chatroom_count = 0
 
     function joinChatRoomByEmail(email) {
         $.post("/chatroom/email", { email: email }, (chatroom, status) => {
             if (chatroom.id != '') {
-                chat_room_id = chatroom.id.toString()
+                let chat_room_id = chatroom.id.toString()
                 chatroom_table.insertRow(0).innerHTML =
                 `<td class="row w-100 justify-content-between m-0 p-0" >
                     <a class="col btn tabe-hover-row mr-0" id="${chat_room_id}" onclick="joinChatRoomById('${chat_room_id}')">
@@ -53,13 +55,19 @@
         })
     }
 
-    $.get("/chatroom", (res, status) => {
-        res.forEach(chatroom => {
-            chat_room_id = chatroom._id.toString()
+    $.get("/chatroom",async (data, status) => {
+        await data.forEach(async chatroom => {
+            chatroom_count++
+            $('#chatroom_count')[0].innerHTML = `${chatroom_count} <em class="fas fa-comments"></em>`
+            let chat_room_id = chatroom._id.toString()
+            chatroom_member = chatroom.accessList.find(access_id => access_id != user_profile._id)
+            await $.post("/profile/findname", { user_profile_id: chatroom_member }, (username, status) => chatroom_member = username)
+            console.log(chat_room_id)
             chatroom_table.insertRow(0).innerHTML =
             `<td class="row w-100 justify-content-between m-0 p-0" >
               <a class="col btn tabe-hover-row mr-0" id="${chat_room_id}" onclick="joinChatRoomById('${chat_room_id}')">
-                ${chatroom.name}
+                <p class="mb-0"><strong>${chatroom.name}</strong> <br>
+                To: ${chatroom_member}</p>
               </a>
               <button type="button" class="col-2 col-md-1 btn tabe-hover-row text-right" id="open_model_${chat_room_id}" onclick="$('#modal_${chat_room_id}').modal();">
                 <em class="fas fa-edit"></em>
@@ -89,7 +97,6 @@
     function joinChatRoomById(id) {
         $.post("/chatroom/id", { chat_room_id: id, user_profile_id: user_profile._id }, (chatroom, status) => {
             if (chatroom.id != '') {
-                console.log(chatroom)
                 new_message_id_count = 0
                 clearChatbox()
                 const chatroom_id_list_found = chatroom_id_list.findIndex(_id => _id == chatroom.id)

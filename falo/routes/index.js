@@ -39,6 +39,7 @@ module.exports = app => {
 
 	app.get('/profile', ensureAuthenticated, userController.profile)
 	app.post('/profile', ensureAuthenticated, userController.updateProfile)
+	app.post('/profile/findname', ensureAuthenticated, userController.findProfileNameById)
 
 	app.get('/home', ensureAuthenticated, userController.home)
 	

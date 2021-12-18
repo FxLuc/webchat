@@ -62,7 +62,6 @@ const profile = (req, res, next) => {
 }
 
 const updateProfile = (req, res, next) => {
-    console.log(req.body.user_profile_gender);
     User
         .findById(req.user.id)
         .then(user => {
@@ -85,6 +84,14 @@ const updateProfile = (req, res, next) => {
         })
 }
 
+const findProfileNameById = (req, res, next) => {
+    UserProfile
+    .findById(req.body.user_profile_id).select('name')
+    .then(user_profile => {
+        res.status(200).json(user_profile.name)
+    })
+}
+
 const home = (req, res, next) => {
     UserProfile.findOne({ idUser: req.user.id })
         .then(user_profile => {
@@ -99,4 +106,5 @@ module.exports = {
     profile,
     updateProfile,
     home,
+    findProfileNameById
 }
